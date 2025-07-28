@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 
 namespace Calvini_Bombini;
 
@@ -8,6 +9,10 @@ public class Game1 : Game
 {
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
+
+    private Texture2D textur;
+    private Texture2D grass;
+    private Vector2 position;
 
     public Game1()
     {
@@ -18,33 +23,72 @@ public class Game1 : Game
 
     protected override void Initialize()
     {
-        // TODO: Add your initialization logic here
-
         base.Initialize();
     }
 
     protected override void LoadContent()
     {
-        _spriteBatch = new SpriteBatch(GraphicsDevice);
+        textur = Content.Load<Texture2D>("mensch");
+        grass = Content.Load<Texture2D>("Grass");
 
-        // TODO: use this.Content to load your game content here
+        _spriteBatch = new SpriteBatch(GraphicsDevice);
     }
 
+    MouseState previousMouseState;
     protected override void Update(GameTime gameTime)
     {
-        if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+        KeyboardState keyboardState = Keyboard.GetState();
+        MouseState mouseState = Mouse.GetState();
+
+        if (Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
 
-        // TODO: Add your update logic here
+        if (keyboardState.IsKeyDown(Keys.D)) 
+        {
+            position.X += 10;
+        }
 
+        if (keyboardState.IsKeyDown(Keys.A))
+        {
+            position.X -= 10;
+        }
+
+        if (keyboardState.IsKeyDown(Keys.W))
+        {
+            position.Y -= 10;
+        }
+        if (keyboardState.IsKeyDown(Keys.S))
+        {
+            position.Y += 10;
+        }
+
+        if (mouseState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton == ButtonState.Released)
+        {
+            position.X -= 100;
+        }
+
+        if (mouseState.RightButton == ButtonState.Pressed && previousMouseState.RightButton == ButtonState.Released)
+        { 
+            position.X += 100;
+        }
+
+        previousMouseState = mouseState;
         base.Update(gameTime);
     }
 
     protected override void Draw(GameTime gameTime)
     {
         GraphicsDevice.Clear(Color.CornflowerBlue);
+        _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
 
-        // TODO: Add your drawing code here
+        //_spriteBatch.Draw(textur, new Vector2(0, 0), Color.White);
+        _spriteBatch.Draw(textur, position, null, Color.White, 0f, new Vector2(), 5f, SpriteEffects.None, 0f);
+        //_spriteBatch.Draw(grass, new Vector2(100, 100), null, Color.White, 90f, new Vector2(), 7f, SpriteEffects.None, 0f);
+
+        //Draw(Textur, Position, Farbe)
+        //Draw(Textur, Position, Rectangle, Farbe, Rotation, Origin, Skalierung, Spriteeffects, layerdepth)
+
+        _spriteBatch.End();
 
         base.Draw(gameTime);
     }
