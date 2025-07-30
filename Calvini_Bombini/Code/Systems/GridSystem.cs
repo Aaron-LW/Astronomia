@@ -22,7 +22,7 @@ public static class GridSystem
         foreach (Tile tile in Tiles)
         {
             //spriteBatch.Draw(tile.Texture, new Vector2(tile.Position.X, tile.Position.Y), Color.White);
-            spriteBatch.Draw(tile.Texture, tile.Position, Color.White);
+            spriteBatch.Draw(tile.Texture, tile.Position, null, Color.White, 0f, Vector2.Zero, Settings.GlobalScale, SpriteEffects.None, 0f);
         }
     }
 }
