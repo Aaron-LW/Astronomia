@@ -20,6 +20,7 @@ public class Game1 : Game
 
     protected override void Initialize()
     {
+        Updater.Start();
         base.Initialize();
     }
 
@@ -34,10 +35,7 @@ public class Game1 : Game
         if (Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
 
-        Input.Update();
-        GridSystem.Update();
-
-        Input.SwitchStates();
+        Updater.Update();
 
         base.Update(gameTime);
     }
@@ -47,14 +45,13 @@ public class Game1 : Game
         GraphicsDevice.Clear(Color.CornflowerBlue);
         _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
 
+        Updater.Draw(_spriteBatch);
         //_spriteBatch.Draw(textur, new Vector2(0, 0), Color.White);
         //_spriteBatch.Draw(grass, new Vector2(100, 100), null, Color.White, 90f, new Vector2(), 7f, SpriteEffects.None, 0f);
 
         //Draw(Textur, Position, Farbe)
         //Draw(Textur, Position, Rectangle, Farbe, Rotation, Origin, Skalierung, Spriteeffects, layerdepth)
 
-        GridSystem.Draw(_spriteBatch);
-    
 
         _spriteBatch.End();
 
