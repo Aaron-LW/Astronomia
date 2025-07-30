@@ -78,6 +78,7 @@ public class Game1 : Game
         _spriteBatch.DrawString(_font, $"FPS: {_fps}", new Vector2(10, 10), Color.White, 0f, new Vector2(), 0.1f, SpriteEffects.None, 0f);
 
         //Vertestung von github
+        //Nächster test weil der andere hat angeblich nicht funktioniert
 
         _spriteBatch.End();
 
