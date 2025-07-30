@@ -10,12 +10,25 @@ public class Game1 : Game
 {
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
+    
+    private int _frameCounter;
+    private TimeSpan _elapsedTime = TimeSpan.Zero;
+    private int _fps;
+
+    private SpriteFont _font;
 
     public Game1()
     {
         _graphics = new GraphicsDeviceManager(this);
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
+
+        TargetElapsedTime = TimeSpan.FromSeconds(1.0 / 180.0);
+        _graphics.SynchronizeWithVerticalRetrace = false;
+        IsFixedTimeStep = false;
+        _graphics.IsFullScreen = true;
+
+        _graphics.ApplyChanges();
     }
 
     protected override void Initialize()
@@ -27,6 +40,7 @@ public class Game1 : Game
     protected override void LoadContent()
     {
         TextureRegistry.LoadTextures(this);
+        _font = Content.Load<SpriteFont>("font");
         _spriteBatch = new SpriteBatch(GraphicsDevice);
     }
 
@@ -36,6 +50,16 @@ public class Game1 : Game
             Exit();
 
         Updater.Update();
+
+        _elapsedTime += gameTime.ElapsedGameTime;
+        _frameCounter++;
+
+        if (_elapsedTime >= TimeSpan.FromSeconds(1))
+        {
+            _fps = _frameCounter;
+            _frameCounter = 0;
+            _elapsedTime -= TimeSpan.FromSeconds(1);
+        }
 
         base.Update(gameTime);
     }
@@ -51,7 +75,7 @@ public class Game1 : Game
 
         //Draw(Textur, Position, Farbe)
         //Draw(Textur, Position, Rectangle, Farbe, Rotation, Origin, Skalierung, Spriteeffects, layerdepth)
-
+        _spriteBatch.DrawString(_font, $"FPS: {_fps}", new Vector2(10, 10), Color.White, 0f, new Vector2(), 0.1f, SpriteEffects.None, 0f);
 
         _spriteBatch.End();
 
