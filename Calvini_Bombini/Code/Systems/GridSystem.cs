@@ -8,13 +8,15 @@ public static class GridSystem
 {
     public static List<Tile> Tiles = new List<Tile>();
 
+    private static int _tileSize = 16;
+    private static float _scaledTileSize = _tileSize * Settings.GlobalScale;
+
     public static void Update()
     {
         if (Input.IsLeftMousePressed())
         {
             Vector2 mousePosition = Input.GetMousePosition();
-            Vector2 gridPosition = PositionZuGridPosition(mousePosition);
-            Tiles.Add(new Tile(gridPosition, TextureRegistry.Grass));
+            Tiles.Add(new Tile(GetGridPosition(mousePosition), TextureRegistry.Grass));
         }
     }
 
@@ -28,26 +30,21 @@ public static class GridSystem
         }
     }
 
-    public static Vector2 PositionZuGridPosition(Vector2 position)
+
+    public static Vector2 GetGridPosition(Vector2 position)
     {
-        int tileSize = 16; 
-        float scaledTileSize = tileSize * Settings.GlobalScale;
+        //Calvin Lösung
+        int x = (int)(position.X / _scaledTileSize) * _tileSize;
+        int y = (int)(position.Y / _scaledTileSize) * _tileSize;
 
-        int x = (int)(position.X / scaledTileSize) * tileSize;
-        int y = (int)(position.Y / scaledTileSize) * tileSize;
+        //richtige Lösung
+        float xx = (int)(position.X / _scaledTileSize) * _scaledTileSize;
+        float yy = (int)(position.Y / _scaledTileSize) * _scaledTileSize;
 
-        return new Vector2(x, y);
-    }
-}
-
-public class Tile
-{
-    public Vector2 Position;
-    public Texture2D Texture;
-
-    public Tile(Vector2 position, Texture2D texture)
-    {
-        Position = position;
-        Texture = texture;
+        //cleane lösung
+        return new Vector2(
+            (int)(position.X / _scaledTileSize) * _scaledTileSize,
+            (int)(position.Y / _scaledTileSize) * _scaledTileSize
+        );
     }
 }
