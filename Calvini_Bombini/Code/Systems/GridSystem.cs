@@ -12,7 +12,9 @@ public static class GridSystem
     {
         if (Input.IsLeftMousePressed())
         {
-            Tiles.Add(new Tile(Input.GetMousePosition(), TextureRegistry.Grass));
+            Vector2 mousePosition = Input.GetMousePosition();
+            Vector2 gridPosition = PositionZuGridPosition(mousePosition);
+            Tiles.Add(new Tile(gridPosition, TextureRegistry.Grass));
         }
     }
 
@@ -25,14 +27,25 @@ public static class GridSystem
             spriteBatch.Draw(tile.Texture, tile.Position, null, Color.White, 0f, Vector2.Zero, Settings.GlobalScale, SpriteEffects.None, 0f);
         }
     }
+
+    public static Vector2 PositionZuGridPosition(Vector2 position)
+    {
+        int tileSize = 16; 
+        float scaledTileSize = tileSize * Settings.GlobalScale;
+
+        int x = (int)(position.X / scaledTileSize) * tileSize;
+        int y = (int)(position.Y / scaledTileSize) * tileSize;
+
+        return new Vector2(x, y);
+    }
 }
 
-public class Tile 
+public class Tile
 {
     public Vector2 Position;
     public Texture2D Texture;
 
-    public Tile(Vector2 position, Texture2D texture) 
+    public Tile(Vector2 position, Texture2D texture)
     {
         Position = position;
         Texture = texture;
