@@ -10,7 +10,9 @@ public static class Updater
     public static void Update()
     {
         Input.Update();
+        
         GridSystem.Update();
+        Camera.Update();
 
         Input.SwitchStates();
     }
