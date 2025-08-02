@@ -11,13 +11,20 @@ public static class GridSystem
     private static int _tileSize = 16;
     private static float _scaledTileSize = _tileSize * Settings.GlobalScale;
 
+    private static float _previousScrollWheelValue = 1;
+
     public static void Update()
     {
+        float scrollWheelValue = Mouse.GetState().ScrollWheelValue;
+        Camera.ZoomAt(Input.GetMousePosition(), (scrollWheelValue - _previousScrollWheelValue) / (240 / Camera.Zoom * 2));
+
         if (Input.IsLeftMousePressed() || Input.IsLeftMouseDown() && Input.IsKeyDown(Keys.LeftShift))
         {
             Vector2 mousePosition = Input.GetMousePosition();
             Tiles.Add(new Tile(GetGridPosition(mousePosition), TextureRegistry.Grass));
         }
+
+        _previousScrollWheelValue = scrollWheelValue;
     }
 
     //[Membermodifizierer (public/private) [returntype (void)] [name]()]
@@ -28,9 +35,9 @@ public static class GridSystem
         foreach (Tile tile in Tiles)
         {
             //spriteBatch.Draw(tile.Texture, new Vector2(tile.Position.X, tile.Position.Y), Color.White);
-            spriteBatch.Draw(tile.Texture, tile.Position - Camera.GetPosition(), null, Color.White, 0f, Vector2.Zero, Settings.GlobalScale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(tile.Texture, (tile.Position - Camera.GetPosition()) * Camera.Zoom, null, Color.White, 0f, Vector2.Zero, Settings.GlobalScale * Camera.Zoom, SpriteEffects.None, 0f);
         }
-        spriteBatch.Draw(TextureRegistry.Selector, GetGridPosition(mousePosition) - Camera.GetPosition(), null, Color.White, 0f, new Vector2(), Settings.GlobalScale, SpriteEffects.None, 0f);
+        spriteBatch.Draw(TextureRegistry.Selector, (GetGridPosition(mousePosition) - Camera.GetPosition()) * Camera.Zoom, null, Color.White, 0f, new Vector2(), Settings.GlobalScale * Camera.Zoom, SpriteEffects.None, 0f);
     }
 
 
@@ -45,7 +52,7 @@ public static class GridSystem
         float yy = (int)((position.Y + Camera.Y) / _scaledTileSize) * _scaledTileSize;
 
         //cleane lösung
-        Vector2 worldPos = new Vector2(position.X, position.Y) + Camera.GetPosition();
+        Vector2 worldPos = Camera.GetPosition() + position / Camera.Zoom;
             return new Vector2(
                 (float)Math.Floor(worldPos.X / _scaledTileSize) * _scaledTileSize,
                 (float)Math.Floor(worldPos.Y / _scaledTileSize) * _scaledTileSize
