@@ -46,6 +46,8 @@ public class Game1 : Game
 
     protected override void Update(GameTime gameTime)
     {
+        Time.DeltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+
         if (Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
 
