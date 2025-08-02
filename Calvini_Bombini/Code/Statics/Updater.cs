@@ -1,3 +1,4 @@
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 public static class Updater
@@ -7,9 +8,10 @@ public static class Updater
 
     }
 
-    public static void Update()
+    public static void Update(GameTime gameTime)
     {
         Input.Update();
+        Time.Update(gameTime);
         
         GridSystem.Update();
         Camera.Update();

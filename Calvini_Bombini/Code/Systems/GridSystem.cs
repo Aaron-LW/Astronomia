@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Registries.TextureRegistry;
 using System;
+
 public static class GridSystem
 {
     public static List<Tile> Tiles = new List<Tile>();
@@ -42,21 +43,13 @@ public static class GridSystem
 
     public static Vector2 GetGridPosition(Vector2 position)
     {
-        //Calvin Lösung
-        int x = (int)(position.X / _scaledTileSize) * _tileSize;
-        int y = (int)(position.Y / _scaledTileSize) * _tileSize;
-
-        //richtige Lösung
-        float xx = (int)((position.X + Camera.X) / _scaledTileSize) * _scaledTileSize;
-        float yy = (int)((position.Y + Camera.Y) / _scaledTileSize) * _scaledTileSize;
-
-        //cleane lösung
         Vector2 worldPos = Camera.GetPosition() + position / Camera.Zoom;
-            return new Vector2(
-                (float)Math.Floor(worldPos.X / _scaledTileSize) * _scaledTileSize,
-                (float)Math.Floor(worldPos.Y / _scaledTileSize) * _scaledTileSize
-            );
+        return new Vector2(
+            (float)Math.Floor(worldPos.X / _scaledTileSize) * _scaledTileSize,
+            (float)Math.Floor(worldPos.Y / _scaledTileSize) * _scaledTileSize
+        );
     }
+
     private static void PlaceTile(Vector2 screenPosition, Texture2D texture)
     {
         Vector2 gridPos = GetGridPosition(screenPosition);

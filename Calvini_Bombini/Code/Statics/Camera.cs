@@ -13,29 +13,29 @@ public static class Camera
     }
 
     public static void Update()
-{
-    float moveSpeed = Settings.CameraSpeed * Time.DeltaTime;
+    {
+        float moveSpeed = Settings.CameraSpeed * Time.DeltaTime;
 
-    if (Input.IsKeyDown(Keys.A))
-        {
-            X -= moveSpeed;
-        }
+        if (Input.IsKeyDown(Keys.A))
+            {
+                X -= moveSpeed;
+            }
 
-        if (Input.IsKeyDown(Keys.D))
-        {
-            X += moveSpeed;
-        }
+            if (Input.IsKeyDown(Keys.D))
+            {
+                X += moveSpeed;
+            }
 
-        if (Input.IsKeyDown(Keys.W))
-        {
-            Y -= moveSpeed;
-        }
+            if (Input.IsKeyDown(Keys.W))
+            {
+                Y -= moveSpeed;
+            }
 
-        if (Input.IsKeyDown(Keys.S))
-        {
-            Y += moveSpeed;
-        }
-}
+            if (Input.IsKeyDown(Keys.S))
+            {
+                Y += moveSpeed;
+            }
+    }
 
 
     public static void ZoomAt(Vector2 zoomCenterScreenPos, float addedZoom)
