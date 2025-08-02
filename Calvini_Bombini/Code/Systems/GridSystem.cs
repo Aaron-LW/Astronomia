@@ -20,8 +20,7 @@ public static class GridSystem
 
         if (Input.IsLeftMousePressed() || Input.IsLeftMouseDown() && Input.IsKeyDown(Keys.LeftShift))
         {
-            Vector2 mousePosition = Input.GetMousePosition();
-            Tiles.Add(new Tile(GetGridPosition(mousePosition), TextureRegistry.Grass));
+            PlaceTile(Input.GetMousePosition(), TextureRegistry.Grass);
         }
 
         _previousScrollWheelValue = scrollWheelValue;
@@ -57,5 +56,10 @@ public static class GridSystem
                 (float)Math.Floor(worldPos.X / _scaledTileSize) * _scaledTileSize,
                 (float)Math.Floor(worldPos.Y / _scaledTileSize) * _scaledTileSize
             );
+    }
+    private static void PlaceTile(Vector2 screenPosition, Texture2D texture)
+    {
+        Vector2 gridPos = GetGridPosition(screenPosition);
+        Tiles.Add(new Tile(gridPos, texture));
     }
 }
