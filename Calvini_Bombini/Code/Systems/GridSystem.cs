@@ -24,6 +24,11 @@ public static class GridSystem
             PlaceTile(Input.GetMousePosition(), TextureRegistry.Grass);
         }
 
+        if (Input.IsRightMousePressed() || Input.IsRightMouseDown() && Input.IsKeyDown(Keys.LeftShift))
+        {
+            RemoveTile(Input.GetMousePosition());
+        }
+
         _previousScrollWheelValue = scrollWheelValue;
     }
 
@@ -54,5 +59,30 @@ public static class GridSystem
     {
         Vector2 gridPos = GetGridPosition(screenPosition);
         Tiles.Add(new Tile(gridPos, texture));
+    }
+
+    private static void RemoveTile(Vector2 position)
+    {
+        int? index;
+        index = GetIndexOfTileAtPosition(position);
+
+        if (index != null)
+        {
+            Tiles.RemoveAt((int)index);
+        }
+    }
+
+    private static int? GetIndexOfTileAtPosition(Vector2 position)
+    {
+        Vector2 gridPosition = GetGridPosition(position);
+        for (int i = 0; i < Tiles.Count; i++)
+        {
+            if (Tiles[i].Position == gridPosition)
+            {
+                return i;
+            }
+        }
+
+        return null;
     }
 }
