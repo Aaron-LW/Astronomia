@@ -11,11 +11,13 @@ namespace Registries.TextureRegistry
 
         public static Texture2D Grass;
         public static Texture2D Selector;
+        public static Texture2D Mensch;
 
         public static void LoadTextures(Game1 game1)
         {
             Grass = game1.Content.Load<Texture2D>("Grass");
             Selector = game1.Content.Load<Texture2D>("selector");
+            Mensch = game1.Content.Load<Texture2D>("mensch");
 
             TileTextures.Add(Grass);
         }
