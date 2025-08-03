@@ -33,7 +33,6 @@ public class Game1 : Game
 
     protected override void Initialize()
     {
-        Updater.Start();
         base.Initialize();
     }
 
@@ -42,6 +41,8 @@ public class Game1 : Game
         TextureRegistry.LoadTextures(this);
         _font = Content.Load<SpriteFont>("font");
         _spriteBatch = new SpriteBatch(GraphicsDevice);
+
+        Updater.Start();
     }
 
     protected override void Update(GameTime gameTime)

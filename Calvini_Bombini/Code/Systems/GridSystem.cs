@@ -14,6 +14,14 @@ public static class GridSystem
 
     private static float _previousScrollWheelValue = 1;
 
+    public static void Start()
+    {
+        for (float i = 0; i < 50 * _scaledTileSize; i += _scaledTileSize)
+        {
+            PlaceTile(new Vector2(i, 300), TextureRegistry.Grass);
+        }
+    }
+
     public static void Update()
     {
         float scrollWheelValue = Mouse.GetState().ScrollWheelValue;
@@ -58,6 +66,8 @@ public static class GridSystem
     private static void PlaceTile(Vector2 screenPosition, Texture2D texture)
     {
         Vector2 gridPos = GetGridPosition(screenPosition);
+        if (IsTileAtPosition(screenPosition)) { return; }
+
         Tiles.Add(new Tile(gridPos, texture));
     }
 
@@ -84,5 +94,33 @@ public static class GridSystem
         }
 
         return null;
+    }
+
+    private static Tile GetTileAtPosition(Vector2 position)
+    {
+        Vector2 gridPosition = GetGridPosition(position);
+        for (int i = 0; i < Tiles.Count; i++)
+        {
+            if (Tiles[i].Position == gridPosition)
+            {
+                return Tiles[i];
+            }
+        }
+
+        return null;
+    }
+
+    private static bool IsTileAtPosition(Vector2 position)
+    {
+        Vector2 gridPosition = GetGridPosition(position);
+        for (int i = 0; i < Tiles.Count; i++)
+        {
+            if (Tiles[i].Position == gridPosition)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

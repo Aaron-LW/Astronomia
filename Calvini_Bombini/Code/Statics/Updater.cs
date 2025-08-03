@@ -5,7 +5,7 @@ public static class Updater
 {
     public static void Start()
     {
-
+        GridSystem.Start();
     }
 
     public static void Update(GameTime gameTime)
