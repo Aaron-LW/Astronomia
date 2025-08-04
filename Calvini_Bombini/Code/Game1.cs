@@ -15,8 +15,6 @@ public class Game1 : Game
     private TimeSpan _elapsedTime = TimeSpan.Zero;
     private int _fps;
 
-    private Entity _test;
-
     private SpriteFont _font;
 
     public Game1()
@@ -45,11 +43,6 @@ public class Game1 : Game
         _spriteBatch = new SpriteBatch(GraphicsDevice);
 
         Updater.Start();
-
-        _test = new Entity(TextureRegistry.Mensch,
-            [new PositionComponent(400, 400),
-
-        ]);
     }
 
     protected override void Update(GameTime gameTime)
@@ -78,7 +71,6 @@ public class Game1 : Game
         _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
 
         Updater.Draw(_spriteBatch);
-        _test.Draw(_spriteBatch);
         //_spriteBatch.Draw(textur, new Vector2(0, 0), Color.White);
         //_spriteBatch.Draw(grass, new Vector2(100, 100), null, Color.White, 90f, new Vector2(), 7f, SpriteEffects.None, 0f);
 

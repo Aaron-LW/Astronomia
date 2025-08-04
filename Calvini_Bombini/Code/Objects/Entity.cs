@@ -2,6 +2,8 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using System.Threading;
 
 public class Entity
 {
@@ -73,7 +75,8 @@ public class Entity
     {
         for (int i = 0; i < Components.Count; i++)
         {
-            if (Components[i] is Component)
+            Type type = component.GetType();
+            if (Components[i].GetType() == type)
             {
                 return true;
             }

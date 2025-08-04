@@ -6,6 +6,7 @@ public static class Updater
     public static void Start()
     {
         GridSystem.Start();
+        EntitySystem.Start();
     }
 
     public static void Update(GameTime gameTime)
@@ -14,6 +15,7 @@ public static class Updater
         Time.Update(gameTime);
         
         GridSystem.Update();
+        EntitySystem.Update();
         Camera.Update();
 
         Input.SwitchStates();
@@ -22,5 +24,6 @@ public static class Updater
     public static void Draw(SpriteBatch spriteBatch)
     {
         GridSystem.Draw(spriteBatch);
+        EntitySystem.Draw(spriteBatch);
     }
 }
