@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
@@ -6,17 +7,20 @@ public static class Camera
     public static float X;
     public static float Y;
     public static float Zoom = 1f;
+    public static Entity FocusedEntity;
 
-    public static Vector2 GetPosition()
+    public static void Start()
     {
-        return new Vector2(X, Y);
+        FocusedEntity = EntitySystem.Player;
     }
 
     public static void Update()
     {
-        float moveSpeed = Settings.CameraSpeed * Time.DeltaTime;
+        if (FocusedEntity == null)
+        {
+            float moveSpeed = Settings.CameraSpeed * Time.DeltaTime;
 
-        if (Input.IsKeyDown(Keys.A))
+            if (Input.IsKeyDown(Keys.A))
             {
                 X -= moveSpeed;
             }
@@ -35,8 +39,29 @@ public static class Camera
             {
                 Y += moveSpeed;
             }
+        }
+        else
+        {
+            PositionComponent positionComponent;
+            FocusedEntity.TryGetComponent(out positionComponent);
+
+            if (positionComponent != null)
+            {
+                SetPosition(positionComponent.Position);
+            }
+        }
     }
 
+    public static Vector2 GetPosition()
+    {
+        return new Vector2(X, Y);
+    }
+
+    public static void SetPosition(Vector2 position)
+    {
+        X = position.X;
+        Y = position.Y;
+    }
 
     public static void ZoomAt(Vector2 zoomCenterScreenPos, float addedZoom)
     {

@@ -50,7 +50,7 @@ public class Game1 : Game
         if (Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
 
-        Updater.Update(gameTime);
+        Updater.Update(gameTime, GraphicsDevice);
 
         _elapsedTime += gameTime.ElapsedGameTime;
         _frameCounter++;
