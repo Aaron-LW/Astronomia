@@ -14,6 +14,7 @@ public static class GridSystem
 
     private static float _previousScrollWheelValue = 1;
 
+    private static int _tileIndex = 0;
     public static void Start()
     {
         for (float i = 0; i < 50 * _scaledTileSize; i += _scaledTileSize)
@@ -29,7 +30,12 @@ public static class GridSystem
 
         if (Input.IsLeftMousePressed() || Input.IsLeftMouseDown() && Input.IsKeyDown(Keys.LeftShift))
         {
-            PlaceTile(Input.GetMousePosition(), TextureRegistry.Grass);
+            PlaceTile(Input.GetMousePosition(), TextureRegistry.TileTextures[_tileIndex]);
+
+            //TileTextures:
+            //Grass <- 0
+            //GrassEdge <- 1
+            //Dirt <- 2
         }
 
         if (Input.IsRightMousePressed() || Input.IsRightMouseDown() && Input.IsKeyDown(Keys.LeftShift))
@@ -38,6 +44,22 @@ public static class GridSystem
         }
 
         _previousScrollWheelValue = scrollWheelValue;
+
+        if (Input.IsKeyPressed(Keys.Up))
+        {
+            if (_tileIndex < TextureRegistry.TileTextures.Count - 1)
+            {
+                _tileIndex += 1;
+            }
+        } 
+        
+         if (Input.IsKeyPressed(Keys.Down)) 
+        {
+            if (_tileIndex > 0) 
+            {
+                _tileIndex -= 1;
+            }
+        } 
     }
 
     //[Membermodifizierer (public/private) [returntype (void)] [name]()]
@@ -52,7 +74,6 @@ public static class GridSystem
         }
         spriteBatch.Draw(TextureRegistry.Selector, (GetGridPosition(mousePosition) - Camera.GetPosition()) * Camera.Zoom, null, Color.White, 0f, new Vector2(), Settings.GlobalScale * Camera.Zoom, SpriteEffects.None, 0f);
     }
-
 
     public static Vector2 GetGridPosition(Vector2 position)
     {
