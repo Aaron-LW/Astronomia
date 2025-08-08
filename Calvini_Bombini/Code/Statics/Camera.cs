@@ -11,7 +11,7 @@ public static class Camera
 
     public static void Start()
     {
-        FocusedEntity = EntitySystem.Player;
+        //FocusedEntity = EntitySystem.Player;
     }
 
     public static void Update()

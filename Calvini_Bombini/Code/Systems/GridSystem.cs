@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Registries.TextureRegistry;
 using System;
+using MonoGame.Extended;
 
 public static class GridSystem
 {
@@ -14,7 +15,9 @@ public static class GridSystem
 
     private static float _previousScrollWheelValue = 1;
 
+    private static float _currentTileRotation = 0;
     private static int _tileIndex = 0;
+
     public static void Start()
     {
         for (float i = 0; i < 50 * _scaledTileSize; i += _scaledTileSize)
@@ -30,12 +33,7 @@ public static class GridSystem
 
         if (Input.IsLeftMousePressed() || Input.IsLeftMouseDown() && Input.IsKeyDown(Keys.LeftShift))
         {
-            PlaceTile(Input.GetMousePosition(), TextureRegistry.TileTextures[_tileIndex]);
-
-            //TileTextures:
-            //Grass <- 0
-            //GrassEdge <- 1
-            //Dirt <- 2
+            PlaceTile(Input.GetMousePosition(), TextureRegistry.TileTextures[_tileIndex], _currentTileRotation);
         }
 
         if (Input.IsRightMousePressed() || Input.IsRightMouseDown() && Input.IsKeyDown(Keys.LeftShift))
@@ -51,27 +49,31 @@ public static class GridSystem
             {
                 _tileIndex += 1;
             }
-        } 
-        
-         if (Input.IsKeyPressed(Keys.Down)) 
+        }
+
+        if (Input.IsKeyPressed(Keys.Down))
         {
-            if (_tileIndex > 0) 
+            if (_tileIndex > 0)
             {
                 _tileIndex -= 1;
             }
-        } 
+        }
+        
+        if (Input.IsKeyPressed(Keys.R))
+        {
+            _currentTileRotation += 90 * ((float)Math.PI / 180);
+        }
     }
 
-    //[Membermodifizierer (public/private) [returntype (void)] [name]()]
     public static void Draw(SpriteBatch spriteBatch)
     {
         Vector2 mousePosition = Input.GetMousePosition();
 
         foreach (Tile tile in Tiles)
         {
-            //spriteBatch.Draw(tile.Texture, new Vector2(tile.Position.X, tile.Position.Y), Color.White);
-            spriteBatch.Draw(tile.Texture, (tile.Position - Camera.GetPosition()) * Camera.Zoom, null, Color.White, 0f, Vector2.Zero, Settings.GlobalScale * Camera.Zoom, SpriteEffects.None, 0f);
+            tile.Draw(spriteBatch);
         }
+
         spriteBatch.Draw(TextureRegistry.Selector, (GetGridPosition(mousePosition) - Camera.GetPosition()) * Camera.Zoom, null, Color.White, 0f, new Vector2(), Settings.GlobalScale * Camera.Zoom, SpriteEffects.None, 0f);
     }
 
@@ -84,12 +86,12 @@ public static class GridSystem
         );
     }
 
-    private static void PlaceTile(Vector2 screenPosition, Texture2D texture)
+    private static void PlaceTile(Vector2 screenPosition, Texture2D texture, float rotation = 0)
     {
         Vector2 gridPos = GetGridPosition(screenPosition);
         if (IsTileAtPosition(screenPosition)) { return; }
 
-        Tiles.Add(new Tile(gridPos, texture));
+        Tiles.Add(new Tile(gridPos, texture, rotation));
     }
 
     private static void RemoveTile(Vector2 position)
