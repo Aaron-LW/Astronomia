@@ -75,7 +75,7 @@ public static class GridSystem
         }
 
         spriteBatch.Draw(TextureRegistry.Selector, (GetGridPosition(mousePosition) - Camera.GetPosition()) * Camera.Zoom, null, Color.White, 0f, new Vector2(), Settings.GlobalScale * Camera.Zoom, SpriteEffects.None, 0f);
-        spriteBatch.Draw(TextureRegistry.TileTextures[_tileIndex], mousePosition + new Vector2(15, 15), null, Color.White, 0f, new Vector2(), 1f, SpriteEffects.None, 0f);
+        spriteBatch.Draw(TextureRegistry.TileTextures[_tileIndex], mousePosition + new Vector2(15, 20), null, Color.White, 0f, new Vector2(), 2f, SpriteEffects.None, 0f);
     }
 
     
