@@ -10,10 +10,15 @@ public static class RotationHelper
         return degrees * ((float)Math.PI / 180);
     }
 
-    public static Vector2 GetRotatedPosition(Vector2 position, SizeF bounds, float rotation) 
+    public static Vector2 GetRotatedPosition(Vector2 position, SizeF bounds, float rotation, float scale = -1) 
     {
-        float centerX = position.X + (bounds.Width / 2f) * (Settings.GlobalScale);
-        float centerY = position.Y + (bounds.Height / 2f) * (Settings.GlobalScale);
+        if (scale == -1) 
+        {
+            scale = Settings.GlobalScale;
+        }
+
+        float centerX = position.X + (bounds.Width / 2f * scale);
+        float centerY = position.Y + (bounds.Height / 2f * scale);
 
         float newX = position.X - centerX;
         float newY = position.Y - centerY;
