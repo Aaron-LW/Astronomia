@@ -16,8 +16,9 @@ public static class GridSystem
     private static float _previousScrollWheelValue = 1;
 
     private static float _currentTileRotation = 0;
-    private static int _tileIndex = 0;
-
+    private static int _tileIndex = 0; 
+    private static bool _showRectangle;
+    private static KeyboardState _oldKeyboard;
     public static void Start()
     {
         for (float i = 0; i < 50 * _scaledTileSize; i += _scaledTileSize)
@@ -58,10 +59,15 @@ public static class GridSystem
                 _tileIndex -= 1;
             }
         }
-        
+
         if (Input.IsKeyPressed(Keys.R))
         {
             _currentTileRotation += 90 * ((float)Math.PI / 180);
+        }
+        
+        if (Input.IsKeyPressed(Keys.Tab))
+        {
+            _showRectangle = !_showRectangle;
         }
     }
 
@@ -75,10 +81,17 @@ public static class GridSystem
         }
 
         spriteBatch.Draw(TextureRegistry.Selector, (GetGridPosition(mousePosition) - Camera.GetPosition()) * Camera.Zoom, null, Color.White, 0f, new Vector2(), Settings.GlobalScale * Camera.Zoom, SpriteEffects.None, 0f);
-        spriteBatch.Draw(TextureRegistry.TileTextures[_tileIndex], RotationHelper.GetRotatedPosition(mousePosition, new SizeF(TextureRegistry.TileTextures[_tileIndex].Width, TextureRegistry.TileTextures[_tileIndex].Height), _currentTileRotation, 2f), null, Color.White, _currentTileRotation, new Vector2(), 2f, SpriteEffects.None, 0f);
+        spriteBatch.Draw(TextureRegistry.TileTextures[_tileIndex], RotationHelper.GetRotatedPosition(mousePosition + new Vector2(15, 20), new SizeF(TextureRegistry.TileTextures[_tileIndex].Width, TextureRegistry.TileTextures[_tileIndex].Height), _currentTileRotation, 2f), null, Color.White, _currentTileRotation, new Vector2(), 2f, SpriteEffects.None, 0f);
+
+        if (_showRectangle) 
+        {
+            Vector2 bounds = new Vector2(100, 100);
+            spriteBatch.FillRectangle(new RectangleF(Input.GetMousePosition().X - bounds.X / 2, Input.GetMousePosition().Y - bounds.Y / 2, bounds.X, bounds.Y), Color.White, 0);
+        }
+
     }
 
-    
+
 
     public static Vector2 GetGridPosition(Vector2 position)
     {
