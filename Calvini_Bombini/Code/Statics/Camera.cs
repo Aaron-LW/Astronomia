@@ -11,7 +11,7 @@ public static class Camera
 
     public static void Start()
     {
-        //FocusedEntity = EntitySystem.Player;
+        FocusedEntity = EntitySystem.Player;
     }
 
     public static void Update()
@@ -47,7 +47,7 @@ public static class Camera
 
             if (positionComponent != null)
             {
-                SetPosition(positionComponent.Position);
+                SetPosition(positionComponent.Position + (new Vector2(FocusedEntity.Texture.Width / 2, FocusedEntity.Texture.Height / 2) * Settings.GlobalScale) - (ViewportBounds.Bounds / (2f * Zoom)));
             }
         }
     }
