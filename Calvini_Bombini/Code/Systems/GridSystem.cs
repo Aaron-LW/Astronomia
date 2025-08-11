@@ -18,7 +18,13 @@ public static class GridSystem
     private static float _currentTileRotation = 0;
     private static int _tileIndex = 0; 
     private static bool _showRectangle;
-    private static KeyboardState _oldKeyboard;
+    private static Vector2 _rectangleBounds = new Vector2(100, 100);
+    private static Vector2 _rectanglePosition;
+    private static int _rectangleTilesPerRow = 2;
+    private static int _rectangleTileScale = 2;
+    private static int _rectangleTileSize = _tileSize * _rectangleTileScale;
+    private static int _rectangleTilePadding = 3;
+
     public static void Start()
     {
         for (float i = 0; i < 50 * _scaledTileSize; i += _scaledTileSize)
@@ -68,6 +74,7 @@ public static class GridSystem
         if (Input.IsKeyPressed(Keys.Tab))
         {
             _showRectangle = !_showRectangle;
+            _rectanglePosition = Input.GetMousePosition();
         }
     }
 
@@ -80,17 +87,32 @@ public static class GridSystem
             tile.Draw(spriteBatch);
         }
 
-        spriteBatch.Draw(TextureRegistry.Selector, (GetGridPosition(mousePosition) - Camera.GetPosition()) * Camera.Zoom, null, Color.White, 0f, new Vector2(), Settings.GlobalScale * Camera.Zoom, SpriteEffects.None, 0f);
         spriteBatch.Draw(TextureRegistry.TileTextures[_tileIndex], RotationHelper.GetRotatedPosition(mousePosition + new Vector2(15, 20), new SizeF(TextureRegistry.TileTextures[_tileIndex].Width, TextureRegistry.TileTextures[_tileIndex].Height), _currentTileRotation, 2f), null, Color.White, _currentTileRotation, new Vector2(), 2f, SpriteEffects.None, 0f);
+        spriteBatch.Draw(TextureRegistry.Selector, (GetGridPosition(mousePosition) - Camera.GetPosition()) * Camera.Zoom, null, Color.White, 0f, new Vector2(), Settings.GlobalScale * Camera.Zoom, SpriteEffects.None, 0f);
 
         if (_showRectangle) 
         {
-            Vector2 bounds = new Vector2(100, 100);
-            spriteBatch.FillRectangle(new RectangleF(Input.GetMousePosition().X - bounds.X / 2, Input.GetMousePosition().Y - bounds.Y / 2, bounds.X, bounds.Y), Color.White, 0);
+            _rectangleBounds.X = _rectangleTileSize * _rectangleTilesPerRow;
+            _rectangleBounds.Y = (TextureRegistry.TileTextures.Count / _rectangleTilesPerRow + 1) * _rectangleTileSize;
+            spriteBatch.FillRectangle(new RectangleF(_rectanglePosition.X - _rectangleBounds.X / 2 - _rectangleTilePadding, _rectanglePosition.Y - _rectangleBounds.Y / 2 - _rectangleTilePadding, _rectangleBounds.X + _rectangleTilePadding * 3, _rectangleBounds.Y + _rectangleTilePadding * 3), Color.GhostWhite, 0);
+
+            int x = 0;
+            int y = 0;
+
+            for(int i = 0; i < TextureRegistry.TileTextures.Count; i++) 
+            {
+                spriteBatch.Draw(TextureRegistry.TileTextures[i], _rectanglePosition - _rectangleBounds / 2 + new Vector2((_rectangleTileSize + _rectangleTilePadding) * x, (_rectangleTileSize + _rectangleTilePadding) * y), null, Color.White, 0, new Vector2(), _rectangleTileScale, SpriteEffects.None, 0f);
+            
+                x++;
+                if (x >= _rectangleTilesPerRow) 
+                {
+                    x = 0;
+                    y++;
+                }
+            }
         }
-
     }
-
+ 
 
 
     public static Vector2 GetGridPosition(Vector2 position)
