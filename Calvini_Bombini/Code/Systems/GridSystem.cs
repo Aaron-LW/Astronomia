@@ -70,11 +70,16 @@ public static class GridSystem
         {
             _currentTileRotation += 90 * ((float)Math.PI / 180);
         }
-        
+
         if (Input.IsKeyPressed(Keys.Tab))
         {
             _showRectangle = !_showRectangle;
             _rectanglePosition = Input.GetMousePosition();
+        }
+
+        foreach (Tile tile in Tiles)
+        {
+            tile.Rotation += 10f * Time.DeltaTime;
         }
     }
 
