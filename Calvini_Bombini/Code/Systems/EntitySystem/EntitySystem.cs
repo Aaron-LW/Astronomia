@@ -14,8 +14,9 @@ public static class EntitySystem
         Player = CreateEntity(TextureRegistry.Mensch, [
             new PositionComponent(100, 100),
             new VelocityComponent(100, 0),
-            new CharacterControllerComponent(),
+            new CharacterControllerComponent(20),
             new GravityComponent(),
+            new ColliderComponent(default, true),
         ]);
 
     }
@@ -31,6 +32,8 @@ public static class EntitySystem
         {
             entity.Draw(spriteBatch);
         }
+
+        MovementSystem.Draw(spriteBatch);
     }
 
     public static Entity CreateEntity(Texture2D texture, Component[] components)

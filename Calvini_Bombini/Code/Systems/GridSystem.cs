@@ -76,11 +76,6 @@ public static class GridSystem
             _showRectangle = !_showRectangle;
             _rectanglePosition = Input.GetMousePosition();
         }
-
-        foreach (Tile tile in Tiles)
-        {
-            tile.Rotation += 10f * Time.DeltaTime;
-        }
     }
 
     public static void Draw(SpriteBatch spriteBatch)
