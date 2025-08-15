@@ -14,9 +14,9 @@ public static class EntitySystem
         Player = CreateEntity(TextureRegistry.Mensch, [
             new PositionComponent(100, 100),
             new VelocityComponent(100, 0),
-            new CharacterControllerComponent(20),
+            new CharacterControllerComponent(200),
             new GravityComponent(),
-            new ColliderComponent(default, true),
+            new ColliderComponent(default, false),
         ]);
 
     }

@@ -4,13 +4,15 @@ public class CollisionData
     public bool CollideBottom = false;
     public bool CollideLeft = false;
     public bool CollideRight = false;
+    public bool IsColliding = false;
 
-    public CollisionData(bool collideTop, bool collideBottom, bool collideLeft, bool collideRight)
+    public CollisionData(bool collideTop, bool collideBottom, bool collideLeft, bool collideRight, bool isColliding)
     {
         CollideTop = collideTop;
         CollideBottom = collideBottom;
         CollideLeft = collideLeft;
         CollideRight = collideRight;
+        IsColliding = isColliding;
     }
 
     public CollisionData() { }

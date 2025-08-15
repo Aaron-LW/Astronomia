@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 public class ColliderComponent : Component
 {
     public BoundingBox BoundingBox;
+    public bool OnGround = false;
 
     public ColliderComponent(BoundingBox boundingBox = null, bool drawBoundingBox = false)
     {

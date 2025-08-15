@@ -14,13 +14,17 @@ public class Tile
         Position = position;
         Texture = texture;
         Rotation = rotation;
-        BoundingBox = new BoundingBox(16, 16, true);
+        BoundingBox = new BoundingBox(16, 16, false);
         BoundingBox.UpdatePosition(position);
     }
 
     public void Draw(SpriteBatch spriteBatch)
     {
         spriteBatch.Draw(Texture, (RotationHelper.GetRotatedPosition(Position, new SizeF(Texture.Width, Texture.Height), Rotation) - Camera.GetPosition()) * Camera.Zoom, null, Color.White, Rotation, new Vector2(), Settings.GlobalScale * Camera.Zoom, SpriteEffects.None, 0f);
-        BoundingBox.Draw(spriteBatch);
+
+        if (BoundingBox.DrawBoundingBox)
+        {
+            BoundingBox.Draw(spriteBatch);
+        }
     }
 }

@@ -10,7 +10,7 @@ public class BoundingBox
     public float Width;
     public float ScaledWidth => Width * (Settings.GlobalScale * Camera.Zoom);
     public float Height;
-    public float ScaledHeight =>  Height * (Settings.GlobalScale + Camera.Zoom);
+    public float ScaledHeight => Height * (Settings.GlobalScale + Camera.Zoom);
     public Vector2 Position => new Vector2(X, Y);
     public bool DrawBoundingBox;
 
@@ -29,8 +29,6 @@ public class BoundingBox
 
     public void Draw(SpriteBatch spriteBatch)
     {
-        if (!DrawBoundingBox) { return; }
-
         spriteBatch.DrawRectangle(new RectangleF((X - Camera.GetPosition().X) * Camera.Zoom, (Y - Camera.GetPosition().Y) * Camera.Zoom, Width * (Settings.GlobalScale * Camera.Zoom), Height * (Settings.GlobalScale * Camera.Zoom)),
                                     Color.Red, 3f * Camera.Zoom / 8);
     }
@@ -49,34 +47,31 @@ public class BoundingBox
         float vY = Y + (velocity.Y * Time.DeltaTime);
         CollisionData data = new CollisionData();
 
-        // Obere Seite
-        data.CollideTop = 
+        if (vX < other.X + other.Width &&
+            vX + Width > other.X &&
             vY < other.Y + other.Height &&
-            vY >= other.Y &&
-            vX + Width > other.X &&
-            vX < other.X + other.Width;
+            vY + Height > other.Y)
+        {
+            if (Y + Height <= other.Y && X + Width != other.X && X != other.X + other.Width)
+            {
+                data.CollideBottom = true;
+            }
+            
+            if (X + Width <= other.X && other.Y != Y + Height)
+            {
+                data.CollideRight = true;
+            }
 
-        // Untere Seite
-        data.CollideBottom =
-            vY + Height > other.Y &&
-            vY + Height <= other.Y + other.Height &&
-            vX + Width > other.X &&
-            vX < other.X + other.Width;
+            if (X >= other.X + other.Width && other.Y != Y + Height)
+            {
+                data.CollideLeft = true;
+            }
 
-        // Linke Seite
-        data.CollideLeft =
-            vX < other.X + other.Width &&
-            vX >= other.X &&
-            vY + Height > other.Y &&
-            vY < other.Y + other.Height;
-
-        // Rechte Seite
-        data.CollideRight =
-            vX + Width > other.X &&
-            vX + Width <= other.X + other.Width &&
-            vY + Height > other.Y &&
-            vY < other.Y + other.Height;
-
+            if (Y >= other.Y + other.Height)
+            {
+                data.CollideTop = true;
+            }
+        }
 
         return data;
     }

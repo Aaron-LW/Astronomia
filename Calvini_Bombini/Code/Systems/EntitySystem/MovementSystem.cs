@@ -1,5 +1,6 @@
 using System;
-using System.Numerics;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -40,7 +41,7 @@ public static class MovementSystem
                         velocityComponent.Velocity.X = -characterControllerComponent.MoveSpeed;
                     }
 
-                    if (Input.IsKeyPressed(Keys.Space))
+                    if (Input.IsKeyDown(Keys.Space) && colliderComponent.OnGround == true)
                     {
                         velocityComponent.Velocity.Y = -characterControllerComponent.JumpStrength;
                     }
@@ -52,6 +53,7 @@ public static class MovementSystem
                 }
 
                 //Handle the collision right before the velocity gets added so it doesn't get added lol
+                colliderComponent.OnGround = false;
                 foreach (Tile tile in GridSystem.Tiles)
                 {
                     //if (colliderComponent.BoundingBox.WillCollideWithY(tile.BoundingBox, velocityComponent.Velocity) && colliderComponent.BoundingBox.WillCollideWithX(tile.BoundingBox, velocityComponent.Velocity))
@@ -64,13 +66,25 @@ public static class MovementSystem
 
                     CollisionData collisionData = colliderComponent.BoundingBox.WillCollideWith(tile.BoundingBox, velocityComponent.Velocity);
 
+                    if (collisionData.CollideBottom)
+                    {
+                        velocityComponent.Velocity.Y = 0f;
+                        positionComponent.Y = tile.Position.Y - colliderComponent.BoundingBox.Height;
+                        colliderComponent.OnGround = true;
+                    }
+
+                    if (collisionData.CollideTop)
+                    {
+                        velocityComponent.Velocity.Y = 0f;
+                        positionComponent.Y = tile.Position.Y + tile.Texture.Height;
+                    }
+
                     if (collisionData.CollideLeft)
                     {
                         if (velocityComponent.Velocity.X < 0)
                         {
                             velocityComponent.Velocity.X = 0f;
                             positionComponent.X = tile.Position.X + tile.Texture.Width;
-                            Console.WriteLine("Left");
                         }
                     }
 
@@ -80,15 +94,7 @@ public static class MovementSystem
                         {
                             velocityComponent.Velocity.X = 0f;
                             positionComponent.X = tile.Position.X - colliderComponent.BoundingBox.Width;
-                            Console.WriteLine("Right");
                         }
-                    }
-
-                    if (collisionData.CollideBottom)
-                    {
-                        velocityComponent.Velocity.Y = 0f;
-                        positionComponent.Y = tile.Position.Y - colliderComponent.BoundingBox.Height;
-                        Console.WriteLine("Bottom");
                     }
                 }
 
