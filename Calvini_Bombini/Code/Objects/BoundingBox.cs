@@ -67,7 +67,7 @@ public class BoundingBox
                 data.CollideLeft = true;
             }
 
-            if (Y >= other.Y + other.Height)
+            if (Y >= other.Y + other.Height && X + Width != other.X && X != other.X + other.Width)
             {
                 data.CollideTop = true;
             }

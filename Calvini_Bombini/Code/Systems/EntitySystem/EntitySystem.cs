@@ -16,7 +16,7 @@ public static class EntitySystem
             new VelocityComponent(100, 0),
             new CharacterControllerComponent(200),
             new GravityComponent(),
-            new ColliderComponent(default, false),
+            new ColliderComponent(default, true),
         ]);
 
     }
