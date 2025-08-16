@@ -14,9 +14,9 @@ public static class EntitySystem
         Player = CreateEntity(TextureRegistry.Mensch, [
             new PositionComponent(100, 100),
             new VelocityComponent(100, 0),
-            new CharacterControllerComponent(200),
-            new GravityComponent(),
-            new ColliderComponent(default, true),
+            new CharacterControllerComponent(PlayerSettings.MoveSpeed, PlayerSettings.JumpStrength),
+            new GravityComponent(PlayerSettings.YAcceleration),
+            new ColliderComponent(PlayerSettings.BoundingBox, PlayerSettings.DrawBoundingBox),
         ]);
 
     }

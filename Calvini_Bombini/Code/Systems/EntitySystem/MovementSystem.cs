@@ -99,7 +99,7 @@ public static class MovementSystem
                 }
 
                 positionComponent.AddPosition(velocityComponent.Velocity * Time.DeltaTime);
-                velocityComponent.Velocity.X *= 1f - 10f * Time.DeltaTime;
+                velocityComponent.Velocity.X *= 1f - Settings.Drag * Time.DeltaTime;
 
                 if (velocityComponent.Velocity.X < 3f && velocityComponent.Velocity.X > -3f)
                 {
