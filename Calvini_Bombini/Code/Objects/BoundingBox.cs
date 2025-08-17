@@ -5,8 +5,12 @@ using System;
 
 public class BoundingBox
 {
-    public float X;
-    public float Y;
+    private float _x; //where the actual position gets stored
+    private float _y;
+    public float X { set { _x = value; } get { return _x + XOffset; } } // to only let other stuff get the position with the offset
+    public float Y {set { _y = value; } get { return _y + YOffset; }}
+    public float XOffset;
+    public float YOffset;
     public float Width;
     public float ScaledWidth => Width * (Settings.GlobalScale * Camera.Zoom);
     public float Height;
@@ -18,6 +22,15 @@ public class BoundingBox
     {
         Width = width;
         Height = height;
+        DrawBoundingBox = drawBoundingBox;
+    }
+
+    public BoundingBox(float width, float height, float xOffset, float yOffset, bool drawBoundingBox = false)
+    {
+        Width = width;
+        Height = height;
+        XOffset = xOffset;
+        YOffset = yOffset;
         DrawBoundingBox = drawBoundingBox;
     }
 

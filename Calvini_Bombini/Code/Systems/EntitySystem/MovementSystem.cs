@@ -69,14 +69,14 @@ public static class MovementSystem
                     if (collisionData.CollideBottom)
                     {
                         velocityComponent.Velocity.Y = 0f;
-                        positionComponent.Y = tile.Position.Y - colliderComponent.BoundingBox.Height;
+                        positionComponent.Y = tile.Position.Y - tile.Texture.Height + (entity.Texture.Height - (colliderComponent.BoundingBox.Height + colliderComponent.BoundingBox.YOffset));
                         colliderComponent.OnGround = true;
                     }
 
                     if (collisionData.CollideTop)
                     {
                         velocityComponent.Velocity.Y = 0f;
-                        positionComponent.Y = tile.Position.Y + tile.Texture.Height;
+                        positionComponent.Y = tile.Position.Y + tile.Texture.Height - colliderComponent.BoundingBox.YOffset;
                     }
 
                     if (collisionData.CollideLeft)
@@ -84,7 +84,7 @@ public static class MovementSystem
                         if (velocityComponent.Velocity.X < 0)
                         {
                             velocityComponent.Velocity.X = 0f;
-                            positionComponent.X = tile.Position.X + tile.Texture.Width;
+                            positionComponent.X = tile.Position.X + tile.Texture.Width - colliderComponent.BoundingBox.XOffset;
                         }
                     }
 
@@ -93,7 +93,7 @@ public static class MovementSystem
                         if (velocityComponent.Velocity.X > 0)
                         {
                             velocityComponent.Velocity.X = 0f;
-                            positionComponent.X = tile.Position.X - colliderComponent.BoundingBox.Width;
+                            positionComponent.X = tile.Position.X - tile.Texture.Width + (entity.Texture.Width - (colliderComponent.BoundingBox.Width + colliderComponent.BoundingBox.XOffset));
                         }
                     }
                 }
