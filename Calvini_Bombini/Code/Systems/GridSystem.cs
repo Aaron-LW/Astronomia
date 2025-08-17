@@ -76,8 +76,18 @@ public static class GridSystem
             _showRectangle = !_showRectangle;
             _rectanglePosition = Input.GetMousePosition();
         }
-    }
 
+        if (Input.IsLeftMousePressed())
+        {
+            int? index = GetRectangleIndexAtMousePosition();
+            if (index != null)
+            {
+                _tileIndex = (int)index;
+                _showRectangle = false;
+            }
+        }
+    }
+    
     public static void Draw(SpriteBatch spriteBatch)
     {
         Vector2 mousePosition = Input.GetMousePosition();
@@ -183,5 +193,51 @@ public static class GridSystem
         }
 
         return false;
+    }
+
+    private static void DrawRectangleBoxes(SpriteBatch spriteBatch) 
+    {
+        int x = 0;
+        int y = 0;
+
+        for(int i = 0; i < TextureRegistry.TileTextures.Count; i++) 
+        {
+            Vector2 position = _rectanglePosition - _rectangleBounds / 2 + new Vector2((_rectangleTileSize + _rectangleTilePadding) * x, (_rectangleTileSize + _rectangleTilePadding) * y);
+            spriteBatch.DrawRectangle(new RectangleF(position.X, position.Y, _rectangleTileSize, _rectangleTileSize), Color.Red, 3f);
+
+            x++;
+            if (x >= _rectangleTilesPerRow) 
+            {
+                x = 0;
+                y++;
+            }
+        }
+    }
+
+    private static int? GetRectangleIndexAtMousePosition() 
+    {
+        int x = 0;
+        int y = 0;
+        int index = 0;
+
+        for(int i = 0; i < TextureRegistry.TileTextures.Count; i++) 
+        {
+            Vector2 position = _rectanglePosition - _rectangleBounds / 2 + new Vector2((_rectangleTileSize + _rectangleTilePadding) * x, (_rectangleTileSize + _rectangleTilePadding) * y);
+            RectangleF rect = new RectangleF(position.X, position.Y, _rectangleTileSize, _rectangleTileSize);
+            if (rect.Intersects(Input.GetMouseRectangle())) 
+            {
+                return index;
+            }
+
+            x++;
+            index++;
+            if (x >= _rectangleTilesPerRow) 
+            {
+                x = 0;
+                y++;
+            }
+        }
+
+        return null;
     }
 }

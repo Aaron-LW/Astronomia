@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Text;
+using MonoGame.Extended;
 
 public static class Input
 {
@@ -51,6 +52,11 @@ public static class Input
         Point MousePosition = MouseState.Position;
 
         return new Vector2(MousePosition.X, MousePosition.Y);
+    }
+
+    public static RectangleF GetMouseRectangle()
+    {
+        return new RectangleF(MouseState.Position.X, MouseState.Position.Y, 1, 1);
     }
 
     public static string GetPressedKeys(string startText = "")
