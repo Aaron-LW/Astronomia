@@ -24,6 +24,7 @@ public static class GridSystem
     private static int _rectangleTileScale = 2;
     private static int _rectangleTileSize = _tileSize * _rectangleTileScale;
     private static int _rectangleTilePadding = 3;
+    private static Vector2 _massPlaceStartPostition;
     
 
     public static void Start()
@@ -43,11 +44,13 @@ public static class GridSystem
         {
             if (Input.IsKeyDown(Keys.LeftControl))
             {
-                PlaceTile(Input.GetMousePosition(), TextureRegistry.TileTextures[_tileIndex], _currentTileRotation);
-                PlaceTile(Input.GetMousePosition() + new Vector2(_rectangleTileSize, 0), TextureRegistry.TileTextures[_tileIndex], _currentTileRotation);
-                PlaceTile(Input.GetMousePosition() + new Vector2(0, _rectangleTileSize), TextureRegistry.TileTextures[_tileIndex], _currentTileRotation);
-                PlaceTile(Input.GetMousePosition() + new Vector2(_rectangleTileSize, _rectangleTileSize), TextureRegistry.TileTextures[_tileIndex], _currentTileRotation);
-            }
+                //PlaceTile(Input.GetMousePosition(), TextureRegistry.TileTextures[_tileIndex], _currentTileRotation);
+                //PlaceTile(Input.GetMousePosition() + new Vector2(_rectangleTileSize, 0), TextureRegistry.TileTextures[_tileIndex], _currentTileRotation);
+                //PlaceTile(Input.GetMousePosition() + new Vector2(0, _rectangleTileSize), TextureRegistry.TileTextures[_tileIndex], _currentTileRotation);
+                //PlaceTile(Input.GetMousePosition() + new Vector2(_rectangleTileSize, _rectangleTileSize), TextureRegistry.TileTextures[_tileIndex], _currentTileRotation);
+                _massPlaceStartPostition = Input.GetMousePosition();
+                 
+             }
             else
             {
                 PlaceTile(Input.GetMousePosition(), TextureRegistry.TileTextures[_tileIndex], _currentTileRotation);
@@ -99,7 +102,7 @@ public static class GridSystem
             }
         }
     }
-    
+
     public static void Draw(SpriteBatch spriteBatch)
     {
         Vector2 mousePosition = Input.GetMousePosition();
@@ -112,7 +115,7 @@ public static class GridSystem
         spriteBatch.Draw(TextureRegistry.TileTextures[_tileIndex], RotationHelper.GetRotatedPosition(mousePosition + new Vector2(15, 20), new SizeF(TextureRegistry.TileTextures[_tileIndex].Width, TextureRegistry.TileTextures[_tileIndex].Height), _currentTileRotation, 2f), null, Color.White, _currentTileRotation, new Vector2(), 2f, SpriteEffects.None, 0f);
         spriteBatch.Draw(TextureRegistry.Selector, (GetGridPosition(mousePosition) - Camera.GetPosition()) * Camera.Zoom, null, Color.White, 0f, new Vector2(), Settings.GlobalScale * Camera.Zoom, SpriteEffects.None, 0f);
 
-        if (_showRectangle) 
+        if (_showRectangle)
         {
             _rectangleBounds.X = _rectangleTileSize * _rectangleTilesPerRow;
             _rectangleBounds.Y = (TextureRegistry.TileTextures.Count / _rectangleTilesPerRow + 1) * _rectangleTileSize;
@@ -121,18 +124,21 @@ public static class GridSystem
             int x = 0;
             int y = 0;
 
-            for(int i = 0; i < TextureRegistry.TileTextures.Count; i++) 
+            for (int i = 0; i < TextureRegistry.TileTextures.Count; i++)
             {
                 spriteBatch.Draw(TextureRegistry.TileTextures[i], _rectanglePosition - _rectangleBounds / 2 + new Vector2((_rectangleTileSize + _rectangleTilePadding) * x, (_rectangleTileSize + _rectangleTilePadding) * y), null, Color.White, 0, new Vector2(), _rectangleTileScale, SpriteEffects.None, 0f);
-            
+
                 x++;
-                if (x >= _rectangleTilesPerRow) 
+                if (x >= _rectangleTilesPerRow)
                 {
                     x = 0;
                     y++;
                 }
             }
         }
+
+        spriteBatch.DrawRectangle(new RectangleF(_massPlaceStartPostition.X, _massPlaceStartPostition.Y, Input.GetMousePosition().X - _massPlaceStartPostition.X, Input.GetMousePosition().Y - _massPlaceStartPostition.Y));
+        
     }
  
 
