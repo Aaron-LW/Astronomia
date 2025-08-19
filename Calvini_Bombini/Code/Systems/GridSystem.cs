@@ -24,6 +24,7 @@ public static class GridSystem
     private static int _rectangleTileScale = 2;
     private static int _rectangleTileSize = _tileSize * _rectangleTileScale;
     private static int _rectangleTilePadding = 3;
+    
 
     public static void Start()
     {
@@ -40,7 +41,18 @@ public static class GridSystem
 
         if (Input.IsLeftMousePressed() || Input.IsLeftMouseDown() && Input.IsKeyDown(Keys.LeftShift))
         {
-            PlaceTile(Input.GetMousePosition(), TextureRegistry.TileTextures[_tileIndex], _currentTileRotation);
+            if (Input.IsKeyDown(Keys.LeftControl))
+            {
+                PlaceTile(Input.GetMousePosition(), TextureRegistry.TileTextures[_tileIndex], _currentTileRotation);
+                PlaceTile(Input.GetMousePosition() + new Vector2(_rectangleTileSize, 0), TextureRegistry.TileTextures[_tileIndex], _currentTileRotation);
+                PlaceTile(Input.GetMousePosition() + new Vector2(0, _rectangleTileSize), TextureRegistry.TileTextures[_tileIndex], _currentTileRotation);
+                PlaceTile(Input.GetMousePosition() + new Vector2(_rectangleTileSize, _rectangleTileSize), TextureRegistry.TileTextures[_tileIndex], _currentTileRotation);
+            }
+            else
+            {
+                PlaceTile(Input.GetMousePosition(), TextureRegistry.TileTextures[_tileIndex], _currentTileRotation);
+            }  
+
         }
 
         if (Input.IsRightMousePressed() || Input.IsRightMouseDown() && Input.IsKeyDown(Keys.LeftShift))
