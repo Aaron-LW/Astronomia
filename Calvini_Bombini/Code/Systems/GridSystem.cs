@@ -137,8 +137,11 @@ public static class GridSystem
             }
         }
 
-        spriteBatch.DrawRectangle(new RectangleF(_massPlaceStartPostition.X, _massPlaceStartPostition.Y, Input.GetMousePosition().X - _massPlaceStartPostition.X, Input.GetMousePosition().Y - _massPlaceStartPostition.Y));
-        
+        //spriteBatch.DrawRectangle(new RectangleF(_massPlaceStartPostition.X, _massPlaceStartPostition.Y, Input.GetMousePosition().X - _massPlaceStartPostition.X, Input.GetMousePosition().Y - _massPlaceStartPostition.Y), Color.Yellow, 5f);
+        spriteBatch.DrawLine(_massPlaceStartPostition, _massPlaceStartPostition + new Vector2(Input.GetMousePosition().X - _massPlaceStartPostition.X, 0), Color.Yellow, 3f);
+        spriteBatch.DrawLine(_massPlaceStartPostition + new Vector2(Input.GetMousePosition().X - _massPlaceStartPostition.X, 0), _massPlaceStartPostition + (Input.GetMousePosition() - _massPlaceStartPostition), Color.Yellow, 3f);
+        spriteBatch.DrawLine(_massPlaceStartPostition, new Vector2(_massPlaceStartPostition.X, _massPlaceStartPostition.Y + (Input.GetMousePosition().Y - _massPlaceStartPostition.Y)), Color.Yellow, 3f);
+        spriteBatch.DrawLine(_massPlaceStartPostition + new Vector2(0, Input.GetMousePosition().Y - _massPlaceStartPostition.Y), _massPlaceStartPostition + (Input.GetMousePosition() - _massPlaceStartPostition), Color.Yellow, 3f);
     }
  
 
