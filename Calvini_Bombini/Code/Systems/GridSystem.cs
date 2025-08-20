@@ -16,7 +16,7 @@ public static class GridSystem
     private static float _previousScrollWheelValue = 1;
 
     private static float _currentTileRotation = 0;
-    private static int _tileIndex = 0; 
+    private static int _tileIndex = 0;
     private static bool _showRectangle;
     private static Vector2 _rectangleBounds = new Vector2(100, 100);
     private static Vector2 _rectanglePosition;
@@ -24,8 +24,9 @@ public static class GridSystem
     private static int _rectangleTileScale = 2;
     private static int _rectangleTileSize = _tileSize * _rectangleTileScale;
     private static int _rectangleTilePadding = 3;
+    private static bool _massPlace = false;
     private static Vector2 _massPlaceStartPostition;
-    
+
 
     public static void Start()
     {
@@ -40,22 +41,34 @@ public static class GridSystem
         float scrollWheelValue = Mouse.GetState().ScrollWheelValue;
         Camera.ZoomAt(Input.GetMousePosition(), (scrollWheelValue - _previousScrollWheelValue) / (240 / Camera.Zoom * 2));
 
-        if (Input.IsLeftMousePressed() || Input.IsLeftMouseDown() && Input.IsKeyDown(Keys.LeftShift))
+        if (Input.IsLeftMousePressed() || Input.IsLeftMouseDown() && Input.IsKeyDown(Keys.LeftShift) || Input.IsLeftMouseDown() && Input.IsKeyDown(Keys.LeftControl))
         {
             if (Input.IsKeyDown(Keys.LeftControl))
             {
-                //PlaceTile(Input.GetMousePosition(), TextureRegistry.TileTextures[_tileIndex], _currentTileRotation);
-                //PlaceTile(Input.GetMousePosition() + new Vector2(_rectangleTileSize, 0), TextureRegistry.TileTextures[_tileIndex], _currentTileRotation);
-                //PlaceTile(Input.GetMousePosition() + new Vector2(0, _rectangleTileSize), TextureRegistry.TileTextures[_tileIndex], _currentTileRotation);
-                //PlaceTile(Input.GetMousePosition() + new Vector2(_rectangleTileSize, _rectangleTileSize), TextureRegistry.TileTextures[_tileIndex], _currentTileRotation);
-                _massPlaceStartPostition = Input.GetMousePosition();
-                 
-             }
+                if (_massPlace == false)
+                {
+                    _massPlaceStartPostition = GetGridPosition(Input.GetMousePosition());
+                }
+                _massPlace = true;
+            }
             else
             {
+                if (_massPlace)
+                {
+                    MassPlace();
+                    _massPlace = false;
+                }
                 PlaceTile(Input.GetMousePosition(), TextureRegistry.TileTextures[_tileIndex], _currentTileRotation);
-            }  
+            }
 
+        }
+        else
+        {
+            if (_massPlace)
+            {
+                MassPlace();
+                _massPlace = false;
+            }
         }
 
         if (Input.IsRightMousePressed() || Input.IsRightMouseDown() && Input.IsKeyDown(Keys.LeftShift))
@@ -137,13 +150,12 @@ public static class GridSystem
             }
         }
 
-        //spriteBatch.DrawRectangle(new RectangleF(_massPlaceStartPostition.X, _massPlaceStartPostition.Y, Input.GetMousePosition().X - _massPlaceStartPostition.X, Input.GetMousePosition().Y - _massPlaceStartPostition.Y), Color.Yellow, 5f);
-        spriteBatch.DrawLine(_massPlaceStartPostition, _massPlaceStartPostition + new Vector2(Input.GetMousePosition().X - _massPlaceStartPostition.X, 0), Color.Yellow, 3f);
-        spriteBatch.DrawLine(_massPlaceStartPostition + new Vector2(Input.GetMousePosition().X - _massPlaceStartPostition.X, 0), _massPlaceStartPostition + (Input.GetMousePosition() - _massPlaceStartPostition), Color.Yellow, 3f);
-        spriteBatch.DrawLine(_massPlaceStartPostition, new Vector2(_massPlaceStartPostition.X, _massPlaceStartPostition.Y + (Input.GetMousePosition().Y - _massPlaceStartPostition.Y)), Color.Yellow, 3f);
-        spriteBatch.DrawLine(_massPlaceStartPostition + new Vector2(0, Input.GetMousePosition().Y - _massPlaceStartPostition.Y), _massPlaceStartPostition + (Input.GetMousePosition() - _massPlaceStartPostition), Color.Yellow, 3f);
+        if (_massPlace)
+        {
+            RectangleHelper.DrawRectangle(spriteBatch, _massPlaceStartPostition, GetGridPosition(Input.GetMousePosition()));
+        }
     }
- 
+
 
 
     public static Vector2 GetGridPosition(Vector2 position)
@@ -161,6 +173,13 @@ public static class GridSystem
         if (IsTileAtPosition(screenPosition)) { return; }
 
         Tiles.Add(new Tile(gridPos, texture, rotation));
+    }
+
+    private static void PlaceTileInWorld(Vector2 worldPosition, Texture2D texture, float rotation = 0)
+    {
+        if (IsTileAtPosition(worldPosition)) { return; }
+
+        Tiles.Add(new Tile(worldPosition, texture, rotation));
     }
 
     private static void RemoveTile(Vector2 position)
@@ -216,18 +235,18 @@ public static class GridSystem
         return false;
     }
 
-    private static void DrawRectangleBoxes(SpriteBatch spriteBatch) 
+    private static void DrawRectangleBoxes(SpriteBatch spriteBatch)
     {
         int x = 0;
         int y = 0;
 
-        for(int i = 0; i < TextureRegistry.TileTextures.Count; i++) 
+        for (int i = 0; i < TextureRegistry.TileTextures.Count; i++)
         {
             Vector2 position = _rectanglePosition - _rectangleBounds / 2 + new Vector2((_rectangleTileSize + _rectangleTilePadding) * x, (_rectangleTileSize + _rectangleTilePadding) * y);
             spriteBatch.DrawRectangle(new RectangleF(position.X, position.Y, _rectangleTileSize, _rectangleTileSize), Color.Red, 3f);
 
             x++;
-            if (x >= _rectangleTilesPerRow) 
+            if (x >= _rectangleTilesPerRow)
             {
                 x = 0;
                 y++;
@@ -235,24 +254,24 @@ public static class GridSystem
         }
     }
 
-    private static int? GetRectangleIndexAtMousePosition() 
+    private static int? GetRectangleIndexAtMousePosition()
     {
         int x = 0;
         int y = 0;
         int index = 0;
 
-        for(int i = 0; i < TextureRegistry.TileTextures.Count; i++) 
+        for (int i = 0; i < TextureRegistry.TileTextures.Count; i++)
         {
             Vector2 position = _rectanglePosition - _rectangleBounds / 2 + new Vector2((_rectangleTileSize + _rectangleTilePadding) * x, (_rectangleTileSize + _rectangleTilePadding) * y);
             RectangleF rect = new RectangleF(position.X, position.Y, _rectangleTileSize, _rectangleTileSize);
-            if (rect.Intersects(Input.GetMouseRectangle())) 
+            if (rect.Intersects(Input.GetMouseRectangle()))
             {
                 return index;
             }
 
             x++;
             index++;
-            if (x >= _rectangleTilesPerRow) 
+            if (x >= _rectangleTilesPerRow)
             {
                 x = 0;
                 y++;
@@ -260,5 +279,11 @@ public static class GridSystem
         }
 
         return null;
+    }
+
+    private static void MassPlace()
+    {
+        PlaceTileInWorld(_massPlaceStartPostition, TextureRegistry.TileTextures[_tileIndex]);
+        PlaceTile(Input.GetMousePosition(), TextureRegistry.TileTextures[_tileIndex]);
     }
 }
