@@ -26,7 +26,10 @@ public class Game1 : Game
         TargetElapsedTime = TimeSpan.FromSeconds(1.0 / 180.0);
         _graphics.SynchronizeWithVerticalRetrace = false;
         IsFixedTimeStep = false;
+        _graphics.PreferredBackBufferHeight = 1080;
+        _graphics.PreferredBackBufferWidth = 1920;
         _graphics.IsFullScreen = true;
+
 
         _graphics.ApplyChanges();
     }
