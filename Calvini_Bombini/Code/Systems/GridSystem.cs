@@ -12,9 +12,7 @@ public static class GridSystem
 
     private static int _tileSize = 16;
     private static float _scaledTileSize = _tileSize * Settings.GlobalScale;
-
     private static float _previousScrollWheelValue = 1;
-
     private static float _currentTileRotation = 0;
     private static int _tileIndex = 0;
     private static bool _showRectangle;
@@ -26,6 +24,15 @@ public static class GridSystem
     private static int _rectangleTilePadding = 3;
     private static bool _massPlace = false;
     private static Vector2 _massPlaceStartPostition;
+    private static Vector2 _massPlaceCenterPosition;
+
+    public enum TileEdge
+    {
+        TopLeft,
+        TopRight,
+        BottomLeft,
+        BottomRight,
+    }
 
 
     public static void Start()
@@ -47,6 +54,7 @@ public static class GridSystem
             {
                 if (_massPlace == false)
                 {
+                    _massPlaceCenterPosition = GetGridPosition(Input.GetMousePosition()) + new Vector2(_scaledTileSize / 2, _scaledTileSize / 2);
                     _massPlaceStartPostition = GetGridPosition(Input.GetMousePosition());
                 }
                 _massPlace = true;
@@ -152,19 +160,49 @@ public static class GridSystem
 
         if (_massPlace)
         {
-            RectangleHelper.DrawRectangle(spriteBatch, _massPlaceStartPostition, GetGridPosition(Input.GetMousePosition()));
+            RectangleHelper.DrawRectangle(spriteBatch, GetGridPosition(_massPlaceStartPostition, GetOppositeTileEdgeFromMousePosition(_massPlaceCenterPosition), true), GetGridPosition(Input.GetMousePosition()));
         }
     }
 
 
 
-    public static Vector2 GetGridPosition(Vector2 position)
+    public static Vector2 GetGridPosition(Vector2 position, TileEdge edge = TileEdge.TopLeft, bool worldPosition = false)
     {
-        Vector2 worldPos = Camera.GetPosition() + position / Camera.Zoom;
-        return new Vector2(
-            (float)Math.Floor(worldPos.X / _scaledTileSize) * _scaledTileSize,
-            (float)Math.Floor(worldPos.Y / _scaledTileSize) * _scaledTileSize
-        );
+        Vector2 worldPos = position;
+        if (!worldPosition)
+        {
+            worldPos = Camera.GetPosition() + position / Camera.Zoom;
+        }
+
+        switch (edge)
+        {
+            case TileEdge.TopLeft:
+                return new Vector2(
+                    (float)Math.Floor(worldPos.X / _scaledTileSize) * _scaledTileSize,
+                    (float)Math.Floor(worldPos.Y / _scaledTileSize) * _scaledTileSize
+                );
+
+            case TileEdge.TopRight:
+                return new Vector2(
+                    (float)Math.Floor(worldPos.X / _scaledTileSize) * _scaledTileSize + _scaledTileSize,
+                    (float)Math.Floor(worldPos.Y / _scaledTileSize) * _scaledTileSize
+                );
+
+            case TileEdge.BottomLeft:
+                return new Vector2(
+                    (float)Math.Floor(worldPos.X / _scaledTileSize) * _scaledTileSize,
+                    (float)Math.Floor(worldPos.Y / _scaledTileSize) * _scaledTileSize + _scaledTileSize
+                );
+
+            case TileEdge.BottomRight:
+                return new Vector2(
+                    (float)Math.Floor(worldPos.X / _scaledTileSize) * _scaledTileSize + _scaledTileSize,
+                    (float)Math.Floor(worldPos.Y / _scaledTileSize) * _scaledTileSize + _scaledTileSize
+                );
+        }
+
+        //if this returns we are in big trouble because it normally should never
+        return new Vector2(0, 0);
     }
 
     private static void PlaceTile(Vector2 screenPosition, Texture2D texture, float rotation = 0)
@@ -285,5 +323,39 @@ public static class GridSystem
     {
         PlaceTileInWorld(_massPlaceStartPostition, TextureRegistry.TileTextures[_tileIndex]);
         PlaceTile(Input.GetMousePosition(), TextureRegistry.TileTextures[_tileIndex]);
+    }
+
+    private static TileEdge GetOppositeTileEdgeFromMousePosition(Vector2 centerPosition)
+    {
+        Vector2 mousePosition = Input.GetMousePosition();
+        mousePosition = CoordinateHelper.ScreenToWorldPosition(mousePosition);
+        //spriteBatch.DrawPoint((mousePosition - Camera.GetPosition()) * Camera.Zoom, Color.Red, 30f);
+
+        //Bottom right
+        if (mousePosition.X > centerPosition.X && mousePosition.Y > centerPosition.Y)
+        {
+            return TileEdge.TopLeft;
+        }
+
+        //Bottom left
+        if (mousePosition.X < centerPosition.X && mousePosition.Y > centerPosition.Y)
+        {
+            return TileEdge.TopRight;
+        }
+
+        //Top right
+        if (mousePosition.X > centerPosition.X && mousePosition.Y < centerPosition.Y)
+        {
+            return TileEdge.BottomLeft;
+        }
+
+        //Top left
+        if (mousePosition.X < centerPosition.X && mousePosition.Y < centerPosition.Y)
+        {
+            return TileEdge.BottomRight;
+        }
+
+        //should never happen hopefully but compiler doesn't compile without it 
+        return TileEdge.TopLeft;
     }
 }
