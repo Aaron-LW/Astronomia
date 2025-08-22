@@ -2,7 +2,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.2.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Calvini_Bombini", "Calvini_Bombini.csproj", "{2477B13A-D25C-2B8F-E0AE-CC7B57F505BB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Astronomia", "Astronomia.csproj", "{2477B13A-D25C-2B8F-E0AE-CC7B57F505BB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

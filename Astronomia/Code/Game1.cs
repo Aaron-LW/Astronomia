@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using Registries.TextureRegistry;
 
-namespace Calvini_Bombini;
+namespace Astronomia;
 
 public class Game1 : Game
 {

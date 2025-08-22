@@ -1,7 +1,7 @@
 using System.Diagnostics.Contracts;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
-using Calvini_Bombini;
+using Astronomia;
 
 namespace Registries.TextureRegistry
 {
