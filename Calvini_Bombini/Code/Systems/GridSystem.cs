@@ -160,7 +160,7 @@ public static class GridSystem
 
         if (_massPlace)
         {
-            RectangleHelper.DrawRectangle(spriteBatch, GetGridPosition(_massPlaceStartPostition, GetOppositeTileEdgeFromMousePosition(_massPlaceCenterPosition), true), GetGridPosition(Input.GetMousePosition()));
+            RectangleHelper.DrawRectangle(spriteBatch, GetGridPosition(_massPlaceStartPostition, GetOppositeTileEdgeFromMousePosition(_massPlaceCenterPosition), true), GetGridPosition(Input.GetMousePosition(), GetTileEdgeFromMousePosition(_massPlaceCenterPosition)));
         }
     }
 
@@ -356,6 +356,38 @@ public static class GridSystem
         }
 
         //should never happen hopefully but compiler doesn't compile without it 
+        return TileEdge.TopLeft;
+    }
+
+    private static TileEdge GetTileEdgeFromMousePosition(Vector2 centerPosition)
+    {
+        Vector2 mousePosition = Input.GetMousePosition();
+        mousePosition = CoordinateHelper.ScreenToWorldPosition(mousePosition);
+
+        //Bottom right
+        if (mousePosition.X > centerPosition.X && mousePosition.Y > centerPosition.Y)
+        {
+            return TileEdge.BottomRight;
+        }
+
+        //Bottom left
+        if (mousePosition.X < centerPosition.X && mousePosition.Y > centerPosition.Y)
+        {
+            return TileEdge.BottomLeft;
+        }
+
+        //Top left
+        if (mousePosition.X < centerPosition.X && mousePosition.Y < centerPosition.Y)
+        {
+            return TileEdge.TopLeft;
+        }
+
+        //Top right
+        if (mousePosition.X > centerPosition.X && mousePosition.Y < centerPosition.Y)
+        {
+            return TileEdge.TopRight;
+        }
+
         return TileEdge.TopLeft;
     }
 }
