@@ -45,7 +45,7 @@ public class Game1 : Game
         _font = Content.Load<SpriteFont>("font");
         _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-        Updater.Start();
+        Updater.Start(GraphicsDevice);
     }
 
     protected override void Update(GameTime gameTime)

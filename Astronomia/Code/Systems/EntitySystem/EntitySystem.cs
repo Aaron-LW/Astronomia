@@ -15,7 +15,7 @@ public static class EntitySystem
             new PositionComponent(100, 100),
             new VelocityComponent(100, 0),
             new CharacterControllerComponent(PlayerSettings.MoveSpeed, PlayerSettings.JumpStrength),
-            new GravityComponent(PlayerSettings.YAcceleration),
+            //new GravityComponent(PlayerSettings.YAcceleration),
             new ColliderComponent(PlayerSettings.BoundingBox, PlayerSettings.DrawBoundingBox),
         ]);
 

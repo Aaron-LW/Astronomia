@@ -3,11 +3,11 @@ using Microsoft.Xna.Framework.Graphics;
 
 public static class Updater
 {
-    public static void Start()
+    public static void Start(GraphicsDevice graphicsDevice)
     {
         GridSystem.Start();
         EntitySystem.Start();
-        Camera.Start();
+        Camera.Start(graphicsDevice);
     }
 
     public static void Update(GameTime gameTime, GraphicsDevice graphicsDevice)

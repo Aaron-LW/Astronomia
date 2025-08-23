@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 public static class GridSystem
 {
-    public static List<Tile> Tiles = new List<Tile>();
+    public static Dictionary<Vector2, Tile> Tiles = new Dictionary<Vector2, Tile>();
 
     private static int _tileSize = 16;
     private static float _scaledTileSize = _tileSize * Settings.GlobalScale;
@@ -83,10 +83,10 @@ public static class GridSystem
             }
         }
 
-        if (Input.IsRightMousePressed() || Input.IsRightMouseDown() && Input.IsKeyDown(Keys.LeftShift))
-        {
-            RemoveTile(Input.GetMousePosition());
-        }
+        //if (Input.IsRightMousePressed() || Input.IsRightMouseDown() && Input.IsKeyDown(Keys.LeftShift))
+        //{
+        //    RemoveTile(Input.GetMousePosition());
+        //}
 
         _previousScrollWheelValue = scrollWheelValue;
 
@@ -132,9 +132,11 @@ public static class GridSystem
     {
         Vector2 mousePosition = Input.GetMousePosition();
 
-        foreach (Tile tile in Tiles)
+        foreach (KeyValuePair<Vector2, Tile> keyValuePair in Tiles)
         {
-            tile.Draw(spriteBatch);
+            Vector2 worldPos = IndexToPosition(keyValuePair.Key);
+            Vector2 screenPos = Camera.WorldToScreen(worldPos);
+            keyValuePair.Value.Draw(spriteBatch, screenPos);
         }
 
         spriteBatch.Draw(TextureRegistry.TileTextures[_tileIndex], RotationHelper.GetRotatedPosition(mousePosition + new Vector2(15, 20), new SizeF(TextureRegistry.TileTextures[_tileIndex].Width, TextureRegistry.TileTextures[_tileIndex].Height), _currentTileRotation, 2f), null, Color.White, _currentTileRotation, new Vector2(), 2f, SpriteEffects.None, 0f);
@@ -211,71 +213,60 @@ public static class GridSystem
 
     private static void PlaceTile(Vector2 screenPosition, Texture2D texture, float rotation = 0)
     {
-        Vector2 gridPos = GetGridPosition(screenPosition);
-        if (IsTileAtPosition(screenPosition)) { return; }
-
-        Tiles.Add(new Tile(gridPos, texture, rotation));
+        Vector2 index = GetTileIndex(screenPosition);
+        Tiles[index] = new Tile(texture, rotation);
     }
 
     private static void PlaceTileInWorld(Vector2 worldPosition, Texture2D texture, float rotation = 0)
     {
-        if (IsTileAtPosition(worldPosition)) { return; }
-
-        Tiles.Add(new Tile(worldPosition, texture, rotation));
+        Vector2 index = GetTileIndexWorld(worldPosition);
+        Tiles[index] = new Tile(texture, rotation);
     }
 
-    private static void RemoveTile(Vector2 position)
+    private static Vector2 IndexToPosition(Vector2 index)
     {
-        int? index;
-        index = GetIndexOfTileAtPosition(position);
-
-        if (index != null)
-        {
-            Tiles.RemoveAt((int)index);
-        }
+        return new Vector2(index.X * _tileSize, index.Y * _tileSize);
     }
 
-    private static int? GetIndexOfTileAtPosition(Vector2 position)
+    private static Vector2 GetTileIndex(Vector2 screenPosition)
     {
-        Vector2 gridPosition = GetGridPosition(position);
-        for (int i = 0; i < Tiles.Count; i++)
-        {
-            if (Tiles[i].Position == gridPosition)
-            {
-                return i;
-            }
-        }
+        Vector2 worldPos = Camera.ScreenToWorld(screenPosition);
 
-        return null;
+        return new Vector2((int)Math.Floor(worldPos.X / _scaledTileSize), (int)Math.Floor(worldPos.Y / _scaledTileSize));
     }
 
-    private static Tile GetTileAtPosition(Vector2 position)
+    private static Vector2 GetTileIndexWorld(Vector2 worldPosition)
     {
-        Vector2 gridPosition = GetGridPosition(position);
-        for (int i = 0; i < Tiles.Count; i++)
-        {
-            if (Tiles[i].Position == gridPosition)
-            {
-                return Tiles[i];
-            }
-        }
-
-        return null;
+        return new Vector2((int)Math.Floor(worldPosition.X / _scaledTileSize), (int)Math.Floor(worldPosition.Y / _scaledTileSize));
     }
 
-    private static bool IsTileAtPosition(Vector2 position)
-    {
-        Vector2 gridPosition = GetGridPosition(position);
-        for (int i = 0; i < Tiles.Count; i++)
-        {
-            if (Tiles[i].Position == gridPosition)
-            {
-                return true;
-            }
-        }
+    //private static int? GetIndexOfTileAtPosition(Vector2 position)
+    //{
+    //    Vector2 gridPosition = GetGridPosition(position);
+    //    for (int i = 0; i < Tiles.Count; i++)
+    //    {
+    //        if (Tiles[i].Position == gridPosition)
+    //        {
+    //            return i;
+    //        }
+    //    }
+    //
+    //    return null;
+    //}
 
-        return false;
-    }
+    //(private static Tile GetTileAtPosition(Vector2 position)
+    //{
+        //Vector2 gridPosition = GetGridPosition(position);
+        //for (int i = 0; i < Tiles.Count; i++)
+        //{
+        //    if (Tiles[i].Position == gridPosition)
+        //    {
+        //        return Tiles[i];
+        //    }
+        //}
+
+        //return null;
+    //}
 
     private static void DrawRectangleBoxes(SpriteBatch spriteBatch)
     {
@@ -422,10 +413,12 @@ public static class GridSystem
     {
         for (int i = 0; i < _tilesToProcessPerFrame; i++)
         {
-            if(_tileQueue.Count == 0) { return; }
+            if (_tileQueue.Count == 0) { return; }
             var (position, texture) = _tileQueue.Dequeue();
             PlaceTileInWorld(position, texture);
         }
+
+        Console.WriteLine(Tiles.Count);
     }
 
     private static TileEdge GetOppositeTileEdgeFromMousePosition(Vector2 centerPosition)
