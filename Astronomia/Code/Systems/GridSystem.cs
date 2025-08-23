@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using Registries.TextureRegistry;
 using System;
 using MonoGame.Extended;
-using System.Threading.Tasks;
 
 public static class GridSystem
 {
@@ -83,10 +82,10 @@ public static class GridSystem
             }
         }
 
-        //if (Input.IsRightMousePressed() || Input.IsRightMouseDown() && Input.IsKeyDown(Keys.LeftShift))
-        //{
-        //    RemoveTile(Input.GetMousePosition());
-        //}
+        if (Input.IsRightMousePressed() || Input.IsRightMouseDown() && Input.IsKeyDown(Keys.LeftShift))
+        {
+            RemoveTile(Input.GetMousePosition());
+        }
 
         _previousScrollWheelValue = scrollWheelValue;
 
@@ -168,6 +167,8 @@ public static class GridSystem
         {
             RectangleHelper.DrawRectangle(spriteBatch, GetGridPosition(_massPlaceStartPostition, GetOppositeTileEdgeFromMousePosition(_massPlaceCenterPosition), true), GetGridPosition(Input.GetMousePosition(), GetTileEdgeFromMousePosition(_massPlaceCenterPosition)));
         }
+
+        spriteBatch.DrawString(Settings.Font, "Tiles: " + Tiles.Count, new Vector2(8, 50), Color.White, 0f, new Vector2(), 0.1f, SpriteEffects.None, 0f);
     }
 
 
@@ -221,6 +222,12 @@ public static class GridSystem
     {
         Vector2 index = GetTileIndexWorld(worldPosition);
         Tiles[index] = new Tile(texture, rotation);
+    }
+
+    private static void RemoveTile(Vector2 screenPosition)
+    {
+        Vector2 index = GetTileIndex(screenPosition);
+        if (Tiles.TryGetValue(index, out Tile tile)) { Tiles.Remove(index); }
     }
 
     private static Vector2 IndexToPosition(Vector2 index)
@@ -417,8 +424,6 @@ public static class GridSystem
             var (position, texture) = _tileQueue.Dequeue();
             PlaceTileInWorld(position, texture);
         }
-
-        Console.WriteLine(Tiles.Count);
     }
 
     private static TileEdge GetOppositeTileEdgeFromMousePosition(Vector2 centerPosition)

@@ -15,8 +15,6 @@ public class Game1 : Game
     private TimeSpan _elapsedTime = TimeSpan.Zero;
     private int _fps;
 
-    private SpriteFont _font;
-
     public Game1()
     {
         _graphics = new GraphicsDeviceManager(this);
@@ -42,7 +40,7 @@ public class Game1 : Game
     protected override void LoadContent()
     {
         TextureRegistry.LoadTextures(this);
-        _font = Content.Load<SpriteFont>("font");
+        Settings.Font = Content.Load<SpriteFont>("font");
         _spriteBatch = new SpriteBatch(GraphicsDevice);
 
         Updater.Start(GraphicsDevice);
@@ -79,7 +77,7 @@ public class Game1 : Game
 
         //Draw(Textur, Position, Farbe)
         //Draw(Textur, Position, Rectangle, Farbe, Rotation, Origin, Skalierung, Spriteeffects, layerdepth)
-        _spriteBatch.DrawString(_font, $"FPS: {_fps}", new Vector2(10, 10), Color.White, 0f, new Vector2(), 0.1f, SpriteEffects.None, 0f);
+        _spriteBatch.DrawString(Settings.Font, $"FPS: {_fps}", new Vector2(10, 10), Color.White, 0f, new Vector2(), 0.1f, SpriteEffects.None, 0f);
 
         //Vertestung von github
         //Nächster test weil der andere hat angeblich nicht funktioniert
