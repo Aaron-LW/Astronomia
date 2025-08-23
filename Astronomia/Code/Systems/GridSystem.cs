@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Registries.TextureRegistry;
 using System;
 using MonoGame.Extended;
+using System.Threading.Tasks;
 
 public static class GridSystem
 {
@@ -25,6 +26,8 @@ public static class GridSystem
     private static bool _massPlace = false;
     private static Vector2 _massPlaceStartPostition;
     private static Vector2 _massPlaceCenterPosition;
+    private static Queue<(Vector2 position, Texture2D texture)> _tileQueue = new Queue<(Vector2, Texture2D)>();
+    private static int _tilesToProcessPerFrame = 100;
 
     public enum TileEdge
     {
@@ -45,6 +48,7 @@ public static class GridSystem
 
     public static void Update()
     {
+        ProcessTileQueue();
         float scrollWheelValue = Mouse.GetState().ScrollWheelValue;
         Camera.ZoomAt(Input.GetMousePosition(), (scrollWheelValue - _previousScrollWheelValue) / (240 / Camera.Zoom * 2));
 
@@ -63,7 +67,7 @@ public static class GridSystem
             {
                 if (_massPlace)
                 {
-                    MassPlace();
+                    MassPlaceStepWise();
                     _massPlace = false;
                 }
                 PlaceTile(Input.GetMousePosition(), TextureRegistry.TileTextures[_tileIndex], _currentTileRotation);
@@ -74,7 +78,7 @@ public static class GridSystem
         {
             if (_massPlace)
             {
-                MassPlace();
+                MassPlaceStepWise();
                 _massPlace = false;
             }
         }
@@ -319,10 +323,109 @@ public static class GridSystem
         return null;
     }
 
-    private static void MassPlace()
+    private static void MassPlaceStepWise()
     {
-        PlaceTileInWorld(_massPlaceStartPostition, TextureRegistry.TileTextures[_tileIndex]);
-        PlaceTile(Input.GetMousePosition(), TextureRegistry.TileTextures[_tileIndex]);
+        bool finished = false;
+        float x = _massPlaceStartPostition.X + 1;
+        float y = _massPlaceStartPostition.Y + 1;
+
+        float endX = GetGridPosition(Input.GetMousePosition()).X + 1;
+        float endY = GetGridPosition(Input.GetMousePosition()).Y + 1;
+
+        TileEdge orientation = GetTileEdgeFromMousePosition(_massPlaceCenterPosition);
+
+        switch (orientation)
+        {
+            case TileEdge.BottomRight:
+                while (!finished)
+                {
+                    _tileQueue.Enqueue((new Vector2((float)Math.Round(x), (float)Math.Round(y)), TextureRegistry.TileTextures[_tileIndex]));
+
+                    x += _scaledTileSize;
+                    if (x > endX)
+                    {
+                        x = _massPlaceStartPostition.X;
+                        y += _scaledTileSize;
+                    }
+
+                    if (y > endY)
+                    {
+                        finished = true;
+                    }
+
+                }
+                break;
+
+            case TileEdge.TopLeft:
+                while (!finished)
+                {
+                    _tileQueue.Enqueue((new Vector2((float)Math.Round(x), (float)Math.Round(y)), TextureRegistry.TileTextures[_tileIndex]));
+
+                    x -= _scaledTileSize;
+                    if (x < endX)
+                    {
+                        x = _massPlaceStartPostition.X;
+                        y -= _scaledTileSize;
+                    }
+
+                    if (y < endY)
+                    {
+                        finished = true;
+                    }
+
+                }
+                break;
+
+            case TileEdge.BottomLeft:
+                while (!finished)
+                {
+                    _tileQueue.Enqueue((new Vector2((float)Math.Round(x), (float)Math.Round(y)), TextureRegistry.TileTextures[_tileIndex]));
+
+                    x -= _scaledTileSize;
+                    if (x < endX)
+                    {
+                        x = _massPlaceStartPostition.X;
+                        y += _scaledTileSize;
+                    }
+
+                    if (y > endY)
+                    {
+                        finished = true;
+                    }
+
+                }
+                break;
+
+            case TileEdge.TopRight:
+                while (!finished)
+                {
+                    _tileQueue.Enqueue((new Vector2((float)Math.Round(x), (float)Math.Round(y)), TextureRegistry.TileTextures[_tileIndex]));
+
+                    x += _scaledTileSize;
+                    if (x > endX)
+                    {
+                        x = _massPlaceStartPostition.X;
+                        y -= _scaledTileSize;
+                    }
+
+                    if (y < endY)
+                    {
+                        finished = true;
+                    }
+
+                }
+                break;
+        }
+    }
+
+    private static void ProcessTileQueue()
+    {
+        for (int i = 0; i < _tilesToProcessPerFrame; i++)
+        {
+            if(_tileQueue.Count == 0) { return; }
+            var (position, texture) = _tileQueue.Dequeue();
+            PlaceTileInWorld(position, texture);
+        }
     }
 
     private static TileEdge GetOppositeTileEdgeFromMousePosition(Vector2 centerPosition)
