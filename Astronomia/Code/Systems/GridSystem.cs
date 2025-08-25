@@ -133,14 +133,6 @@ public static class GridSystem
     {
         Vector2 mousePosition = Input.GetMousePosition();
 
-        //foreach (KeyValuePair<Vector2, Tile> keyValuePair in Tiles)
-        //{
-        //    Vector2 worldPos = IndexToPosition(keyValuePair.Key);
-        //    Vector2 screenPos = Camera.WorldToScreen(worldPos);
-        //    keyValuePair.Value.Draw(spriteBatch, screenPos);
-        //}
-
-        //Kameraposition ist Weltposition
         Vector2 start = new Vector2(0, 0);
         Vector2 end = new Vector2(Camera.Viewport.Width, Camera.Viewport.Height);
 
@@ -152,6 +144,7 @@ public static class GridSystem
         {
             for (float y = start.Y; y <= end.Y; y += _scaledTileSize * Camera.Zoom)
             {
+                //spriteBatch.DrawPoint((IndexToPosition(GetTileIndex(new Vector2(x, y))) - Camera.Position) * Camera.Zoom, Color.Yellow, 3f);
                 if (Tiles.TryGetValue(GetTileIndex(new Vector2(x, y)), out Tile tile))
                 {
                     tile.Draw(spriteBatch, (IndexToPosition(GetTileIndex(new Vector2(x, y))) - Camera.Position) * Camera.Zoom);

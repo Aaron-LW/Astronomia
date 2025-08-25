@@ -72,9 +72,9 @@ public static class Camera
         Vector2 beforeZoomWorldPos = GetPosition() + zoomCenterScreenPos / Zoom;
 
         Zoom += addedZoom;
-        if (Zoom < 0.1)
+        if (Zoom < 1.8f)
         {
-            Zoom = 0.1f;
+            Zoom = 1.8f;
         }
 
         Vector2 afterZoomWorldPos = GetPosition() + zoomCenterScreenPos / Zoom;
@@ -83,6 +83,8 @@ public static class Camera
 
         X = (GetPosition() - zoomDelta).X;
         Y = (GetPosition() - zoomDelta).Y;
+
+        Console.WriteLine(Zoom);
     }
 
     public static Matrix GetViewMatrix()
