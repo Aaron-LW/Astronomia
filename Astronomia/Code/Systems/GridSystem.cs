@@ -5,10 +5,12 @@ using System.Collections.Generic;
 using Registries.TextureRegistry;
 using System;
 using MonoGame.Extended;
+using System.Net.Http.Headers;
 
 public static class GridSystem
 {
     public static Dictionary<Vector2, Tile> Tiles = new Dictionary<Vector2, Tile>();
+    public static int DrawnTiles = 0;
 
     private static int _tileSize = 16;
     private static float _scaledTileSize = _tileSize * Settings.GlobalScale;
@@ -131,12 +133,33 @@ public static class GridSystem
     {
         Vector2 mousePosition = Input.GetMousePosition();
 
-        foreach (KeyValuePair<Vector2, Tile> keyValuePair in Tiles)
+        //foreach (KeyValuePair<Vector2, Tile> keyValuePair in Tiles)
+        //{
+        //    Vector2 worldPos = IndexToPosition(keyValuePair.Key);
+        //    Vector2 screenPos = Camera.WorldToScreen(worldPos);
+        //    keyValuePair.Value.Draw(spriteBatch, screenPos);
+        //}
+
+        //Kameraposition ist Weltposition
+        Vector2 start = new Vector2(0, 0);
+        Vector2 end = new Vector2(Camera.Viewport.Width, Camera.Viewport.Height);
+
+        //spriteBatch.DrawPoint(start, Color.Green, 30f);
+        //spriteBatch.DrawPoint(end, Color.Red, 30f);
+
+        DrawnTiles = 0;
+        for (float x = start.X; x <= end.X; x += _scaledTileSize * Camera.Zoom) 
         {
-            Vector2 worldPos = IndexToPosition(keyValuePair.Key);
-            Vector2 screenPos = Camera.WorldToScreen(worldPos);
-            keyValuePair.Value.Draw(spriteBatch, screenPos);
+            for (float y = start.Y; y <= end.Y; y += _scaledTileSize * Camera.Zoom)
+            {
+                if (Tiles.TryGetValue(GetTileIndex(new Vector2(x, y)), out Tile tile))
+                {
+                    tile.Draw(spriteBatch, (IndexToPosition(GetTileIndex(new Vector2(x, y))) - Camera.Position) * Camera.Zoom);
+                }
+            }
         }
+
+        spriteBatch.DrawString(Settings.Font, "Drawn tiles: " + DrawnTiles.ToString(), new Vector2(8, 100), Color.White, 0f, new Vector2(), 0.1f, SpriteEffects.None, 0f);
 
         spriteBatch.Draw(TextureRegistry.TileTextures[_tileIndex], RotationHelper.GetRotatedPosition(mousePosition + new Vector2(15, 20), new SizeF(TextureRegistry.TileTextures[_tileIndex].Width, TextureRegistry.TileTextures[_tileIndex].Height), _currentTileRotation, 2f), null, Color.White, _currentTileRotation, new Vector2(), 2f, SpriteEffects.None, 0f);
         spriteBatch.Draw(TextureRegistry.Selector, (GetGridPosition(mousePosition) - Camera.GetPosition()) * Camera.Zoom, null, Color.White, 0f, new Vector2(), Settings.GlobalScale * Camera.Zoom, SpriteEffects.None, 0f);

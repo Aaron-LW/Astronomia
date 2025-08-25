@@ -17,7 +17,8 @@ public class Tile
 
     public void Draw(SpriteBatch spriteBatch, Vector2 position)
     {
-        spriteBatch.Draw(Texture, (RotationHelper.GetRotatedPosition(position, new SizeF(Texture.Width, Texture.Height), Rotation)), null, Color.White, Rotation, new Vector2(), Settings.GlobalScale * Camera.Zoom, SpriteEffects.None, 0f);
+        spriteBatch.Draw(Texture, position, null, Color.White, Rotation, new Vector2(), Settings.GlobalScale * Camera.Zoom, SpriteEffects.None, 0f);
+        GridSystem.DrawnTiles++;
 
         if (BoundingBox.DrawBoundingBox)
         {
