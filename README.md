@@ -1,10 +1,1 @@
-This is cool game and all but where's Katzi?
-
-
-eaten
-
-
-but it refused...
-
-
-tedia doesn't care!!!!
+![Katzi](https://github.com/user-attachments/assets/e3b880b6-8e15-4147-a9c7-da4c221b512f)
