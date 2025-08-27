@@ -83,8 +83,6 @@ public static class Camera
 
         X = (GetPosition() - zoomDelta).X;
         Y = (GetPosition() - zoomDelta).Y;
-
-        Console.WriteLine(Zoom);
     }
 
     public static Matrix GetViewMatrix()

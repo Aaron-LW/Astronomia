@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using Registries.TextureRegistry;
 using System;
 using MonoGame.Extended;
-using System.Net.Http.Headers;
 
 public static class GridSystem
 {
@@ -134,7 +133,7 @@ public static class GridSystem
         Vector2 mousePosition = Input.GetMousePosition();
 
         Vector2 start = new Vector2(0, 0);
-        Vector2 end = new Vector2(Camera.Viewport.Width, Camera.Viewport.Height);
+        Vector2 end = new Vector2(Camera.Viewport.Width, Camera.Viewport.Height) + (new Vector2(_scaledTileSize, _scaledTileSize) * Camera.Zoom);
 
         //spriteBatch.DrawPoint(start, Color.Green, 30f);
         //spriteBatch.DrawPoint(end, Color.Red, 30f);
