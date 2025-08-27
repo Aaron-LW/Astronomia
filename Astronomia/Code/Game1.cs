@@ -24,8 +24,9 @@ public class Game1 : Game
         TargetElapsedTime = TimeSpan.FromSeconds(1.0 / 180.0);
         _graphics.SynchronizeWithVerticalRetrace = false;
         IsFixedTimeStep = false;
-        _graphics.PreferredBackBufferHeight = 1080;
-        _graphics.PreferredBackBufferWidth = 1920;
+
+        _graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+        _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
         _graphics.IsFullScreen = true;
 
 

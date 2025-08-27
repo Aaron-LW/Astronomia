@@ -14,7 +14,7 @@ public static class Camera
 
     public static void Start(GraphicsDevice graphicsDevice)
     {
-        FocusedEntity = EntitySystem.Player;
+        //FocusedEntity = EntitySystem.Player;
         Viewport = graphicsDevice.Viewport;
     }
 

@@ -42,8 +42,10 @@ public class BoundingBox
 
     public void Draw(SpriteBatch spriteBatch)
     {
-        spriteBatch.DrawRectangle(new RectangleF((X - Camera.GetPosition().X) * Camera.Zoom, (Y - Camera.GetPosition().Y) * Camera.Zoom, Width * (Settings.GlobalScale * Camera.Zoom), Height * (Settings.GlobalScale * Camera.Zoom)),
-                                    Color.Red, 3f * Camera.Zoom / 8);
+        //spriteBatch.DrawRectangle(new RectangleF((X - Camera.GetPosition().X) * Camera.Zoom, (Y - Camera.GetPosition().Y) * Camera.Zoom, P, Height * (Settings.GlobalScale * Camera.Zoom)),
+        //                            Color.Red, 3f * Camera.Zoom / 8);
+
+        RectangleHelper.DrawRectangle(spriteBatch, Position, Width, Height, Color.Red);
     }
 
     public bool IsCollidingWith(BoundingBox other)
