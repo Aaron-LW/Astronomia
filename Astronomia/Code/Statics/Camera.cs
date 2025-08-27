@@ -14,7 +14,10 @@ public static class Camera
 
     public static void Start(GraphicsDevice graphicsDevice)
     {
-        //FocusedEntity = EntitySystem.Player;
+        if (DebugMenu.CameraFocusPlayer)
+        {
+            FocusedEntity = EntitySystem.Player;
+        }
         Viewport = graphicsDevice.Viewport;
     }
 
@@ -72,7 +75,7 @@ public static class Camera
         Vector2 beforeZoomWorldPos = GetPosition() + zoomCenterScreenPos / Zoom;
 
         Zoom += addedZoom;
-        if (Zoom < 1.8f)
+        if (Zoom < 1.8f && !DebugMenu.InfiniteZoom)
         {
             Zoom = 1.8f;
         }

@@ -8,6 +8,7 @@ public static class Updater
         GridSystem.Start();
         EntitySystem.Start();
         Camera.Start(graphicsDevice);
+        DebugMenu.Start();
     }
 
     public static void Update(GameTime gameTime, GraphicsDevice graphicsDevice)
@@ -19,6 +20,7 @@ public static class Updater
         EntitySystem.Update();
         Camera.Update();
         ViewportBounds.Update(graphicsDevice);
+        DebugMenu.Update();
 
         Input.SwitchStates();
     }
@@ -27,5 +29,6 @@ public static class Updater
     {
         GridSystem.Draw(spriteBatch);
         EntitySystem.Draw(spriteBatch);
+        DebugMenu.Draw(spriteBatch);
     }
 }

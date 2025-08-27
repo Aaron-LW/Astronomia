@@ -135,15 +135,22 @@ public static class GridSystem
         Vector2 start = new Vector2(0, 0);
         Vector2 end = new Vector2(Camera.Viewport.Width, Camera.Viewport.Height) + (new Vector2(_scaledTileSize, _scaledTileSize) * Camera.Zoom);
 
-        spriteBatch.DrawPoint(start, Color.Green, 30f);
-        spriteBatch.DrawPoint(end, Color.Red, 30f);
+        if (DebugMenu.ViewportEdges)
+        {
+            spriteBatch.DrawPoint(start, Color.Green, 30f);
+            spriteBatch.DrawPoint(end - new Vector2(_scaledTileSize, _scaledTileSize) * Camera.Zoom, Color.Red, 30f);
+        }
 
         DrawnTiles = 0;
         for (float x = start.X; x <= end.X; x += _scaledTileSize * Camera.Zoom) 
         {
             for (float y = start.Y; y <= end.Y; y += _scaledTileSize * Camera.Zoom)
             {
-                //spriteBatch.DrawPoint((IndexToPosition(GetTileIndex(new Vector2(x, y))) - Camera.Position) * Camera.Zoom, Color.Yellow, 3f);
+                if (DebugMenu.CameraTileSamplePoints)
+                {
+                    spriteBatch.DrawPoint((IndexToPosition(GetTileIndex(new Vector2(x, y))) - Camera.Position) * Camera.Zoom, Color.Yellow, 3f);
+                }
+                
                 if (Tiles.TryGetValue(GetTileIndex(new Vector2(x, y)), out Tile tile))
                 {
                     tile.Draw(spriteBatch, (IndexToPosition(GetTileIndex(new Vector2(x, y))) - Camera.Position) * Camera.Zoom);
