@@ -10,7 +10,7 @@ public static class DebugMenu
     public static bool ViewportEdges = false;
     public static bool CameraTileSamplePoints = false;
     public static bool CameraFocusPlayer = false;
-    public static bool InfiniteZoom = true;
+    public static bool InfiniteZoom = false;
 
     private static Vector2 _buttonStartPos = new Vector2(50, 50);
     private static Vector2 _buttonBounds = new Vector2(450, 100);
