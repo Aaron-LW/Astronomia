@@ -9,8 +9,9 @@ public static class DebugMenu
     public static bool PlayerHitbox = true;
     public static bool ViewportEdges = false;
     public static bool CameraTileSamplePoints = false;
-    public static bool CameraFocusPlayer = false;
-    public static bool InfiniteZoom = true;
+    public static bool CameraFocusPlayer = true;
+    public static bool InfiniteZoom = false;
+    public static bool ShowCollisionCheckArea = true;
 
     private static Vector2 _buttonStartPos = new Vector2(50, 50);
     private static Vector2 _buttonBounds = new Vector2(450, 100);
@@ -69,6 +70,11 @@ public static class DebugMenu
         {
             InfiniteZoom = !InfiniteZoom;
         }
+
+        if (new RectangleF(_buttonStartPos.X, _buttonStartPos.Y + (_buttonBounds.Y + _buttonSpacing) * 5, _buttonBounds.X, _buttonBounds.Y).Contains(Input.GetMousePosition()) && Input.IsLeftMousePressed() && _debugMenu)
+        {
+            ShowCollisionCheckArea = !ShowCollisionCheckArea;
+        }
     }
 
     public static void Draw(SpriteBatch spriteBatch)
@@ -89,5 +95,8 @@ public static class DebugMenu
 
         spriteBatch.FillRectangle(new RectangleF(_buttonStartPos.X, _buttonStartPos.Y + (_buttonBounds.Y + _buttonSpacing) * 4, _buttonBounds.X, _buttonBounds.Y), Color.Gray);
         spriteBatch.DrawString(Settings.Font, "InfiniteZoom: " + InfiniteZoom.ToString(), _buttonStartPos + _buttonBounds / 2 + new Vector2(0, _buttonBounds.Y + _buttonSpacing) * 4 - Settings.Font.MeasureString("InfiniteZoom: " + InfiniteZoom.ToString()) * 0.1f / 2, Color.White, 0f, new Vector2(), 0.1f, SpriteEffects.None, 0f);
+
+        spriteBatch.FillRectangle(new RectangleF(_buttonStartPos.X, _buttonStartPos.Y + (_buttonBounds.Y + _buttonSpacing) * 5, _buttonBounds.X, _buttonBounds.Y), Color.Gray);
+        spriteBatch.DrawString(Settings.Font, "ShowCollisionCheckArea: " + ShowCollisionCheckArea.ToString(), _buttonStartPos + _buttonBounds / 2 + new Vector2(0, _buttonBounds.Y + _buttonSpacing) * 5 - Settings.Font.MeasureString("ShowCollisionCheckArea: " + ShowCollisionCheckArea.ToString()) * 0.1f / 2, Color.White, 0f, new Vector2(), 0.1f, SpriteEffects.None, 0f);
     }
 }

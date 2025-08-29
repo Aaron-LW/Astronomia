@@ -6,6 +6,8 @@ using Microsoft.Xna.Framework.Input;
 
 public static class MovementSystem
 {
+    private static float d = 1.7f;
+
     public static void Update()
     {
         foreach (Entity entity in EntitySystem.Entities)
@@ -54,49 +56,43 @@ public static class MovementSystem
 
                 //Handle the collision right before the velocity gets added so it doesn't get added lol
                 colliderComponent.OnGround = false;
-                //foreach (Tile tile in GridSystem.Tiles)
-                //{
-                    //if (colliderComponent.BoundingBox.WillCollideWithY(tile.BoundingBox, velocityComponent.Velocity) && colliderComponent.BoundingBox.WillCollideWithX(tile.BoundingBox, velocityComponent.Velocity))
-                    //{
-                    //    if (velocityComponent.Velocity.Y > 0f)
-                    //    {
-                    //        velocityComponent.Velocity.Y = 0f;
-                    //    }
-                    //}
+                // Make collision here
+                Tile[] tiles = GridSystem.GetTilesInArea(positionComponent.Position + (velocityComponent.Velocity * Time.DeltaTime) - new Vector2(EntitySystem.Player.Texture.Width, EntitySystem.Player.Texture.Height) / 2 * d + new Vector2(EntitySystem.Player.Texture.Width, EntitySystem.Player.Texture.Height) / 2, positionComponent.Position + new Vector2(EntitySystem.Player.Texture.Width, EntitySystem.Player.Texture.Height) * d);
+                foreach (Tile tile in tiles)
+                {
+                    CollisionData collisionData = colliderComponent.BoundingBox.WillCollideWith(tile.BoundingBox, velocityComponent.Velocity);
 
-                    //CollisionData collisionData = colliderComponent.BoundingBox.WillCollideWith(tile.BoundingBox, velocityComponent.Velocity);
+                    if (collisionData.CollideBottom)
+                    {
+                        velocityComponent.Velocity.Y = 0f;
+                        positionComponent.Y = collisionData.Position.Y - tile.Texture.Height + (entity.Texture.Height - (colliderComponent.BoundingBox.Height + colliderComponent.BoundingBox.YOffset));
+                        colliderComponent.OnGround = true;
+                    }
 
-                    //if (collisionData.CollideBottom)
-                    //{
-                    //    velocityComponent.Velocity.Y = 0f;
-                    //    positionComponent.Y = tile.Position.Y - tile.Texture.Height + (entity.Texture.Height - (colliderComponent.BoundingBox.Height + colliderComponent.BoundingBox.YOffset));
-                    //    colliderComponent.OnGround = true;
-                    //}
+                    if (collisionData.CollideLeft)
+                    {
+                        if (velocityComponent.Velocity.X < 0)
+                        {
+                            velocityComponent.Velocity.X = 0f;
+                            positionComponent.X = collisionData.Position.X + tile.Texture.Width - colliderComponent.BoundingBox.XOffset;
+                        }
+                    }
 
-                    //if (collisionData.CollideTop)
-                    //{
-                    //    velocityComponent.Velocity.Y = 0f;
-                    //    positionComponent.Y = tile.Position.Y + tile.Texture.Height - colliderComponent.BoundingBox.YOffset;
-                    //}
+                    if (collisionData.CollideRight)
+                    {
+                        if (velocityComponent.Velocity.X > 0)
+                        {
+                            velocityComponent.Velocity.X = 0f;
+                            positionComponent.X = collisionData.Position.X - tile.Texture.Width + (entity.Texture.Width - (colliderComponent.BoundingBox.Width + colliderComponent.BoundingBox.XOffset));
+                        }
+                    }
 
-                    //if (collisionData.CollideLeft)
-                    //{
-                    //    if (velocityComponent.Velocity.X < 0)
-                    //    {
-                    //        velocityComponent.Velocity.X = 0f;
-                    //        positionComponent.X = tile.Position.X + tile.Texture.Width - colliderComponent.BoundingBox.XOffset;
-                    //    }
-                    //}
-
-                    //if (collisionData.CollideRight)
-                    //{
-                    //    if (velocityComponent.Velocity.X > 0)
-                    //    {
-                    //        velocityComponent.Velocity.X = 0f;
-                    //        positionComponent.X = tile.Position.X - tile.Texture.Width + (entity.Texture.Width - (colliderComponent.BoundingBox.Width + colliderComponent.BoundingBox.XOffset));
-                    //    }
-                    //}
-                //}
+                    if (collisionData.CollideTop)
+                    {
+                        velocityComponent.Velocity.Y = 0f;
+                        positionComponent.Y = collisionData.Position.Y + tile.Texture.Height - colliderComponent.BoundingBox.YOffset;
+                    }
+                }
 
                 positionComponent.AddPosition(velocityComponent.Velocity * Time.DeltaTime);
                 velocityComponent.Velocity.X *= 1f - Settings.Drag * Time.DeltaTime;
@@ -118,8 +114,15 @@ public static class MovementSystem
         foreach (Entity entity in EntitySystem.Entities)
         {
             ColliderComponent colliderComponent;
+            PositionComponent positionComponent = null;
+            VelocityComponent velocityComponent = null;
 
             entity.TryGetComponent(out colliderComponent);
+            if (DebugMenu.ShowCollisionCheckArea)
+            {
+                entity.TryGetComponent(out positionComponent);
+                entity.TryGetComponent(out velocityComponent);
+            }
 
             if (colliderComponent != null)
             {
@@ -127,6 +130,11 @@ public static class MovementSystem
                 {
                     colliderComponent.BoundingBox.Draw(spriteBatch);
                 }
+            }
+
+            if (DebugMenu.ShowCollisionCheckArea)
+            {
+                GridSystem.GetTilesInArea(positionComponent.Position + (velocityComponent.Velocity * Time.DeltaTime) - new Vector2(EntitySystem.Player.Texture.Width, EntitySystem.Player.Texture.Height) / 2 * d + new Vector2(EntitySystem.Player.Texture.Width, EntitySystem.Player.Texture.Height) / 2, positionComponent.Position + new Vector2(EntitySystem.Player.Texture.Width, EntitySystem.Player.Texture.Height) * d, spriteBatch);
             }
         }
     }

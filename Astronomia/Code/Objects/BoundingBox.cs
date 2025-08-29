@@ -48,6 +48,14 @@ public class BoundingBox
         RectangleHelper.DrawRectangle(spriteBatch, Position, Width, Height, Color.Red);
     }
 
+    public void DrawWorld(SpriteBatch spriteBatch)
+    {
+        //spriteBatch.DrawRectangle(new RectangleF((X - Camera.GetPosition().X) * Camera.Zoom, (Y - Camera.GetPosition().Y) * Camera.Zoom, P, Height * (Settings.GlobalScale * Camera.Zoom)),
+        //                            Color.Red, 3f * Camera.Zoom / 8);
+        Vector2 position = Camera.ScreenToWorld(Position);
+        RectangleHelper.DrawRectangle(spriteBatch, position - Camera.Position, Width, Height, Color.Red);
+    }
+
     public bool IsCollidingWith(BoundingBox other)
     {
         return X < other.X + other.Width &&
@@ -61,6 +69,7 @@ public class BoundingBox
         float vX = X + (velocity.X * Time.DeltaTime);
         float vY = Y + (velocity.Y * Time.DeltaTime);
         CollisionData data = new CollisionData();
+        data.Position = other.Position;
 
         if (vX < other.X + other.Width &&
             vX + Width > other.X &&
@@ -71,7 +80,7 @@ public class BoundingBox
             {
                 data.CollideBottom = true;
             }
-            
+
             if (X + Width <= other.X && other.Y != Y + Height)
             {
                 data.CollideRight = true;

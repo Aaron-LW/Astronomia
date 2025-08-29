@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using Registries.TextureRegistry;
 using System;
 using MonoGame.Extended;
+using MonoGame.Extended.ViewportAdapters;
+using System.Text;
 
 public static class GridSystem
 {
@@ -150,7 +152,7 @@ public static class GridSystem
                 {
                     spriteBatch.DrawPoint((IndexToPosition(GetTileIndex(new Vector2(x, y))) - Camera.Position) * Camera.Zoom, Color.Yellow, 3f);
                 }
-                
+
                 if (Tiles.TryGetValue(GetTileIndex(new Vector2(x, y)), out Tile tile))
                 {
                     tile.Draw(spriteBatch, (IndexToPosition(GetTileIndex(new Vector2(x, y))) - Camera.Position) * Camera.Zoom);
@@ -194,7 +196,6 @@ public static class GridSystem
     }
 
 
-
     public static Vector2 GetGridPosition(Vector2 position, TileEdge edge = TileEdge.TopLeft, bool worldPosition = false)
     {
         Vector2 worldPos = position;
@@ -232,6 +233,34 @@ public static class GridSystem
 
         //if this returns we are in big trouble because it normally should never
         return new Vector2(0, 0);
+    }
+
+    public static Tile[] GetTilesInArea(Vector2 start, Vector2 end, SpriteBatch spriteBatch = null)
+    {
+        List<Tile> tiles = new List<Tile>();
+        if (spriteBatch != null && DebugMenu.ShowCollisionCheckArea) { RectangleHelper.DrawRectangle(spriteBatch, start, end, 3f); }
+        start = (start - Camera.GetPosition()) * Camera.Zoom;
+        end = (end - Camera.GetPosition()) * Camera.Zoom;
+
+        if (spriteBatch != null && DebugMenu.ShowCollisionCheckArea)
+        {
+            spriteBatch.DrawPoint(start, Color.Red, 10f);
+            spriteBatch.DrawPoint(end, Color.Red, 10f);
+        }
+
+        for (float x = start.X; x <= end.X; x += _scaledTileSize * Camera.Zoom)
+        {
+            for (float y = start.Y; y <= end.Y; y += _scaledTileSize * Camera.Zoom)
+            {
+                if (Tiles.TryGetValue(GetTileIndex(new Vector2(x, y)), out Tile tile))
+                {
+                    tiles.Add(tile);
+                    tile.BoundingBox.UpdatePosition(IndexToPosition(GetTileIndex(new Vector2(x, y))));
+                }
+            }
+        }
+
+        return tiles.ToArray();
     }
 
     private static void PlaceTile(Vector2 screenPosition, Texture2D texture, float rotation = 0)
