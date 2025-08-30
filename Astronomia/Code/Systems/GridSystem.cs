@@ -28,7 +28,7 @@ public static class GridSystem
     private static bool _massPlace = false;
     private static Vector2 _massPlaceStartPostition;
     private static Vector2 _massPlaceCenterPosition;
-    private static Queue<(Vector2 position, Texture2D texture)> _tileQueue = new Queue<(Vector2, Texture2D)>();
+    private static Queue<(Vector2 position, Texture2D texture, float rotation)> _tileQueue = new Queue<(Vector2, Texture2D, float)>();
     private static int _tilesToProcessPerFrame = 100;
 
     public enum TileEdge
@@ -388,7 +388,7 @@ public static class GridSystem
             case TileEdge.BottomRight:
                 while (!finished)
                 {
-                    _tileQueue.Enqueue((new Vector2((float)Math.Round(x), (float)Math.Round(y)), TextureRegistry.TileTextures[_tileIndex]));
+                    _tileQueue.Enqueue((new Vector2((float)Math.Round(x), (float)Math.Round(y)), TextureRegistry.TileTextures[_tileIndex], _currentTileRotation));
 
                     x += _scaledTileSize;
                     if (x > endX)
@@ -408,7 +408,7 @@ public static class GridSystem
             case TileEdge.TopLeft:
                 while (!finished)
                 {
-                    _tileQueue.Enqueue((new Vector2((float)Math.Round(x), (float)Math.Round(y)), TextureRegistry.TileTextures[_tileIndex]));
+                    _tileQueue.Enqueue((new Vector2((float)Math.Round(x), (float)Math.Round(y)), TextureRegistry.TileTextures[_tileIndex], _currentTileRotation));
 
                     x -= _scaledTileSize;
                     if (x < endX)
@@ -428,7 +428,7 @@ public static class GridSystem
             case TileEdge.BottomLeft:
                 while (!finished)
                 {
-                    _tileQueue.Enqueue((new Vector2((float)Math.Round(x), (float)Math.Round(y)), TextureRegistry.TileTextures[_tileIndex]));
+                    _tileQueue.Enqueue((new Vector2((float)Math.Round(x), (float)Math.Round(y)), TextureRegistry.TileTextures[_tileIndex], _currentTileRotation));
 
                     x -= _scaledTileSize;
                     if (x < endX)
@@ -448,7 +448,7 @@ public static class GridSystem
             case TileEdge.TopRight:
                 while (!finished)
                 {
-                    _tileQueue.Enqueue((new Vector2((float)Math.Round(x), (float)Math.Round(y)), TextureRegistry.TileTextures[_tileIndex]));
+                    _tileQueue.Enqueue((new Vector2((float)Math.Round(x), (float)Math.Round(y)), TextureRegistry.TileTextures[_tileIndex], _currentTileRotation));
 
                     x += _scaledTileSize;
                     if (x > endX)
@@ -472,8 +472,8 @@ public static class GridSystem
         for (int i = 0; i < _tilesToProcessPerFrame; i++)
         {
             if (_tileQueue.Count == 0) { return; }
-            var (position, texture) = _tileQueue.Dequeue();
-            PlaceTileInWorld(position, texture);
+            var (position, texture, rotation) = _tileQueue.Dequeue();
+            PlaceTileInWorld(position, texture, rotation);
         }
     }
 
