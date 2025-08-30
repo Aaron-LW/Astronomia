@@ -5,13 +5,12 @@ using System.Collections.Generic;
 using Registries.TextureRegistry;
 using System;
 using MonoGame.Extended;
-using MonoGame.Extended.ViewportAdapters;
-using System.Text;
 
 public static class GridSystem
 {
     public static Dictionary<Vector2, Tile> Tiles = new Dictionary<Vector2, Tile>();
     public static int DrawnTiles = 0;
+    public static bool LevelEditor = true;
 
     private static int _tileSize = 16;
     private static float _scaledTileSize = _tileSize * Settings.GlobalScale;
@@ -56,27 +55,30 @@ public static class GridSystem
 
         if (Input.IsLeftMousePressed() || Input.IsLeftMouseDown() && Input.IsKeyDown(Keys.LeftShift) || Input.IsLeftMouseDown() && Input.IsKeyDown(Keys.LeftControl))
         {
-            if (Input.IsKeyDown(Keys.LeftControl))
+            if (LevelEditor)
             {
-                if (_massPlace == false)
+                if (Input.IsKeyDown(Keys.LeftControl))
                 {
-                    _massPlaceCenterPosition = GetGridPosition(Input.GetMousePosition()) + new Vector2(_scaledTileSize / 2, _scaledTileSize / 2);
-                    _massPlaceStartPostition = GetGridPosition(Input.GetMousePosition());
+                    if (_massPlace == false)
+                    {
+                        _massPlaceCenterPosition = GetGridPosition(Input.GetMousePosition()) + new Vector2(_scaledTileSize / 2, _scaledTileSize / 2);
+                        _massPlaceStartPostition = GetGridPosition(Input.GetMousePosition());
+                    }
+                    _massPlace = true;
                 }
-                _massPlace = true;
-            }
-            else
-            {
-                if (_massPlace)
+                else
                 {
-                    MassPlaceStepWise();
-                    _massPlace = false;
+                    if (_massPlace)
+                    {
+                        MassPlaceStepWise();
+                        _massPlace = false;
+                    }
+                    PlaceTile(Input.GetMousePosition(), TextureRegistry.TileTextures[_tileIndex], _currentTileRotation);
                 }
-                PlaceTile(Input.GetMousePosition(), TextureRegistry.TileTextures[_tileIndex], _currentTileRotation);
             }
 
         }
-        else
+        else if (LevelEditor)
         {
             if (_massPlace)
             {
@@ -87,39 +89,26 @@ public static class GridSystem
 
         if (Input.IsRightMousePressed() || Input.IsRightMouseDown() && Input.IsKeyDown(Keys.LeftShift))
         {
-            RemoveTile(Input.GetMousePosition());
+            if (LevelEditor)
+            {
+                RemoveTile(Input.GetMousePosition());
+            }
         }
 
         _previousScrollWheelValue = scrollWheelValue;
 
-        if (Input.IsKeyPressed(Keys.Up))
-        {
-            if (_tileIndex < TextureRegistry.TileTextures.Count - 1)
-            {
-                _tileIndex += 1;
-            }
-        }
-
-        if (Input.IsKeyPressed(Keys.Down))
-        {
-            if (_tileIndex > 0)
-            {
-                _tileIndex -= 1;
-            }
-        }
-
-        if (Input.IsKeyPressed(Keys.R))
+        if (Input.IsKeyPressed(Keys.R) && LevelEditor)
         {
             _currentTileRotation += 90 * ((float)Math.PI / 180);
         }
 
-        if (Input.IsKeyPressed(Keys.Tab))
+        if (Input.IsKeyPressed(Keys.Tab) && LevelEditor)
         {
             _showRectangle = !_showRectangle;
             _rectanglePosition = Input.GetMousePosition();
         }
 
-        if (Input.IsLeftMousePressed())
+        if (Input.IsLeftMousePressed() && LevelEditor)
         {
             int? index = GetRectangleIndexAtMousePosition();
             if (index != null)
@@ -127,6 +116,11 @@ public static class GridSystem
                 _tileIndex = (int)index;
                 _showRectangle = false;
             }
+        }
+
+        if (Input.IsKeyPressed(Keys.F))
+        {
+            LevelEditor = !LevelEditor;
         }
     }
 
@@ -162,10 +156,13 @@ public static class GridSystem
 
         spriteBatch.DrawString(Settings.Font, "Drawn tiles: " + DrawnTiles.ToString(), new Vector2(8, 100), Color.White, 0f, new Vector2(), 0.1f, SpriteEffects.None, 0f);
 
-        spriteBatch.Draw(TextureRegistry.TileTextures[_tileIndex], RotationHelper.GetRotatedPosition(mousePosition + new Vector2(15, 20), new SizeF(TextureRegistry.TileTextures[_tileIndex].Width, TextureRegistry.TileTextures[_tileIndex].Height), _currentTileRotation, 2f), null, Color.White, _currentTileRotation, new Vector2(), 2f, SpriteEffects.None, 0f);
-        spriteBatch.Draw(TextureRegistry.Selector, (GetGridPosition(mousePosition) - Camera.GetPosition()) * Camera.Zoom, null, Color.White, 0f, new Vector2(), Settings.GlobalScale * Camera.Zoom, SpriteEffects.None, 0f);
+        if (LevelEditor)
+        {
+            spriteBatch.Draw(TextureRegistry.TileTextures[_tileIndex], RotationHelper.GetRotatedPosition(mousePosition + new Vector2(15, 20), new SizeF(TextureRegistry.TileTextures[_tileIndex].Width, TextureRegistry.TileTextures[_tileIndex].Height), _currentTileRotation, 2f), null, Color.White, _currentTileRotation, new Vector2(), 2f, SpriteEffects.None, 0f);
+            spriteBatch.Draw(TextureRegistry.Selector, (GetGridPosition(mousePosition) - Camera.GetPosition()) * Camera.Zoom, null, Color.White, 0f, new Vector2(), Settings.GlobalScale * Camera.Zoom, SpriteEffects.None, 0f);
+        }
 
-        if (_showRectangle)
+        if (_showRectangle && LevelEditor)
         {
             _rectangleBounds.X = _rectangleTileSize * _rectangleTilesPerRow;
             _rectangleBounds.Y = (TextureRegistry.TileTextures.Count / _rectangleTilesPerRow + 1) * _rectangleTileSize;
@@ -187,7 +184,7 @@ public static class GridSystem
             }
         }
 
-        if (_massPlace)
+        if (_massPlace && LevelEditor)
         {
             RectangleHelper.DrawRectangle(spriteBatch, GetGridPosition(_massPlaceStartPostition, GetOppositeTileEdgeFromMousePosition(_massPlaceCenterPosition), true), GetGridPosition(Input.GetMousePosition(), GetTileEdgeFromMousePosition(_massPlaceCenterPosition)));
         }

@@ -6,12 +6,11 @@ using System;
 
 public static class DebugMenu
 {
-    public static bool PlayerHitbox = true;
+    public static bool PlayerHitbox = false;
     public static bool ViewportEdges = false;
     public static bool CameraTileSamplePoints = false;
-    public static bool CameraFocusPlayer = true;
     public static bool InfiniteZoom = false;
-    public static bool ShowCollisionCheckArea = true;
+    public static bool ShowCollisionCheckArea = false;
 
     private static Vector2 _buttonStartPos = new Vector2(50, 50);
     private static Vector2 _buttonBounds = new Vector2(450, 100);
@@ -55,23 +54,10 @@ public static class DebugMenu
 
         if (new RectangleF(_buttonStartPos.X, _buttonStartPos.Y + (_buttonBounds.Y + _buttonSpacing) * 3, _buttonBounds.X, _buttonBounds.Y).Contains(Input.GetMousePosition()) && Input.IsLeftMousePressed() && _debugMenu)
         {
-            CameraFocusPlayer = !CameraFocusPlayer;
-            if (CameraFocusPlayer == true)
-            {
-                Camera.FocusedEntity = EntitySystem.Player;
-            }
-            else
-            {
-                Camera.FocusedEntity = null;
-            }
-        }
-
-        if (new RectangleF(_buttonStartPos.X, _buttonStartPos.Y + (_buttonBounds.Y + _buttonSpacing) * 4, _buttonBounds.X, _buttonBounds.Y).Contains(Input.GetMousePosition()) && Input.IsLeftMousePressed() && _debugMenu)
-        {
             InfiniteZoom = !InfiniteZoom;
         }
 
-        if (new RectangleF(_buttonStartPos.X, _buttonStartPos.Y + (_buttonBounds.Y + _buttonSpacing) * 5, _buttonBounds.X, _buttonBounds.Y).Contains(Input.GetMousePosition()) && Input.IsLeftMousePressed() && _debugMenu)
+        if (new RectangleF(_buttonStartPos.X, _buttonStartPos.Y + (_buttonBounds.Y + _buttonSpacing) * 4, _buttonBounds.X, _buttonBounds.Y).Contains(Input.GetMousePosition()) && Input.IsLeftMousePressed() && _debugMenu)
         {
             ShowCollisionCheckArea = !ShowCollisionCheckArea;
         }
@@ -91,12 +77,9 @@ public static class DebugMenu
         spriteBatch.DrawString(Settings.Font, "CameraTileSamplePoints: " + CameraTileSamplePoints.ToString(), _buttonStartPos + _buttonBounds / 2 + new Vector2(0, _buttonBounds.Y + _buttonSpacing) * 2 - Settings.Font.MeasureString("CameraTileSamplePoints: " + CameraTileSamplePoints.ToString()) * 0.1f / 2, Color.White, 0f, new Vector2(), 0.1f, SpriteEffects.None, 0f);
 
         spriteBatch.FillRectangle(new RectangleF(_buttonStartPos.X, _buttonStartPos.Y + (_buttonBounds.Y + _buttonSpacing) * 3, _buttonBounds.X, _buttonBounds.Y), Color.Gray);
-        spriteBatch.DrawString(Settings.Font, "CameraFocusPlayer: " + CameraFocusPlayer.ToString(), _buttonStartPos + _buttonBounds / 2 + new Vector2(0, _buttonBounds.Y + _buttonSpacing) * 3 - Settings.Font.MeasureString("CameraFocusPlayer: " + CameraFocusPlayer.ToString()) * 0.1f / 2, Color.White, 0f, new Vector2(), 0.1f, SpriteEffects.None, 0f);
+        spriteBatch.DrawString(Settings.Font, "InfiniteZoom: " + InfiniteZoom.ToString(), _buttonStartPos + _buttonBounds / 2 + new Vector2(0, _buttonBounds.Y + _buttonSpacing) * 3 - Settings.Font.MeasureString("InfiniteZoom: " + InfiniteZoom.ToString()) * 0.1f / 2, Color.White, 0f, new Vector2(), 0.1f, SpriteEffects.None, 0f);
 
         spriteBatch.FillRectangle(new RectangleF(_buttonStartPos.X, _buttonStartPos.Y + (_buttonBounds.Y + _buttonSpacing) * 4, _buttonBounds.X, _buttonBounds.Y), Color.Gray);
-        spriteBatch.DrawString(Settings.Font, "InfiniteZoom: " + InfiniteZoom.ToString(), _buttonStartPos + _buttonBounds / 2 + new Vector2(0, _buttonBounds.Y + _buttonSpacing) * 4 - Settings.Font.MeasureString("InfiniteZoom: " + InfiniteZoom.ToString()) * 0.1f / 2, Color.White, 0f, new Vector2(), 0.1f, SpriteEffects.None, 0f);
-
-        spriteBatch.FillRectangle(new RectangleF(_buttonStartPos.X, _buttonStartPos.Y + (_buttonBounds.Y + _buttonSpacing) * 5, _buttonBounds.X, _buttonBounds.Y), Color.Gray);
-        spriteBatch.DrawString(Settings.Font, "ShowCollisionCheckArea: " + ShowCollisionCheckArea.ToString(), _buttonStartPos + _buttonBounds / 2 + new Vector2(0, _buttonBounds.Y + _buttonSpacing) * 5 - Settings.Font.MeasureString("ShowCollisionCheckArea: " + ShowCollisionCheckArea.ToString()) * 0.1f / 2, Color.White, 0f, new Vector2(), 0.1f, SpriteEffects.None, 0f);
+        spriteBatch.DrawString(Settings.Font, "ShowCollisionCheckArea: " + ShowCollisionCheckArea.ToString(), _buttonStartPos + _buttonBounds / 2 + new Vector2(0, _buttonBounds.Y + _buttonSpacing) * 4 - Settings.Font.MeasureString("ShowCollisionCheckArea: " + ShowCollisionCheckArea.ToString()) * 0.1f / 2, Color.White, 0f, new Vector2(), 0.1f, SpriteEffects.None, 0f);
     }
 }

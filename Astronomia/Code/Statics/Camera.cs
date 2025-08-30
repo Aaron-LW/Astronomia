@@ -14,7 +14,7 @@ public static class Camera
 
     public static void Start(GraphicsDevice graphicsDevice)
     {
-        if (DebugMenu.CameraFocusPlayer)
+        if (!GridSystem.LevelEditor)
         {
             FocusedEntity = EntitySystem.Player;
         }
@@ -23,6 +23,15 @@ public static class Camera
 
     public static void Update()
     {
+        if (GridSystem.LevelEditor)
+        {
+            FocusedEntity = null;
+        }
+        else
+        {
+            FocusedEntity = EntitySystem.Player;
+        }
+
         if (FocusedEntity == null)
         {
             float moveSpeed = Settings.CameraSpeed * Time.DeltaTime;

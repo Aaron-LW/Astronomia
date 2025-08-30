@@ -17,7 +17,7 @@ public static class Updater
         Time.Update(gameTime);
         
         GridSystem.Update();
-        EntitySystem.Update();
+        if (!GridSystem.LevelEditor) { EntitySystem.Update(); }
         Camera.Update();
         ViewportBounds.Update(graphicsDevice);
         DebugMenu.Update();
