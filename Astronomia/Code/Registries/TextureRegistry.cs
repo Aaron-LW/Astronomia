@@ -1,4 +1,3 @@
-using System.Diagnostics.Contracts;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Astronomia;
@@ -14,6 +13,8 @@ namespace Registries.TextureRegistry
         public static Texture2D Selector;
         public static Texture2D Mensch;
         public static Texture2D Dirt;
+        public static Texture2D Pickaxe;
+        public static Texture2D ItemSlot;
 
         public static void LoadTextures(Game1 game1)
         {
@@ -22,6 +23,8 @@ namespace Registries.TextureRegistry
             Mensch = game1.Content.Load<Texture2D>("mensch");
             GrassEdge = game1.Content.Load<Texture2D>("GrassErde");
             Dirt = game1.Content.Load<Texture2D>("Dirt");
+            Pickaxe = game1.Content.Load<Texture2D>("Pickaxe");
+            ItemSlot = game1.Content.Load<Texture2D>("ItemSlot");
 
             TileTextures.Add(Grass);
             TileTextures.Add(GrassEdge);

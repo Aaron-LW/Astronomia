@@ -1,7 +1,3 @@
-using Microsoft.Xna.Framework.Graphics;
-using MonoGame.Extended;
-using Microsoft.Xna.Framework;
-
 public class ColliderComponent : Component
 {
     public BoundingBox BoundingBox;

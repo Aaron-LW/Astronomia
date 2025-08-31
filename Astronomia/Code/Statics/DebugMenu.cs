@@ -2,7 +2,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
 using Microsoft.Xna.Framework.Input;
-using System;
 
 public static class DebugMenu
 {

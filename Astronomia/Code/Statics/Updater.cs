@@ -5,6 +5,7 @@ public static class Updater
 {
     public static void Start(GraphicsDevice graphicsDevice)
     {
+        ItemRegistry.Start();
         GridSystem.Start();
         EntitySystem.Start();
         Camera.Start(graphicsDevice);

@@ -1,12 +1,12 @@
 using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using MonoGame.Extended;
 
 public static class MovementSystem
 {
-    private static float d = 1.7f;
+    private static float d = 2f;
 
     public static void Update()
     {

@@ -1,8 +1,7 @@
-using System;
 using System.Collections.Generic;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Registries.TextureRegistry;
+using Microsoft.Xna.Framework;
 
 public static class EntitySystem
 {
@@ -17,6 +16,7 @@ public static class EntitySystem
             new CharacterControllerComponent(PlayerSettings.MoveSpeed, PlayerSettings.JumpStrength),
             new GravityComponent(PlayerSettings.YAcceleration),
             new ColliderComponent(PlayerSettings.BoundingBox, PlayerSettings.DrawBoundingBox),
+            new ContainerComponent(new Vector2(100, 200), 10, 3, 5, [new ItemStack(ItemRegistry.Pickaxe, 1), new ItemStack(ItemRegistry.Dirt, 1), new ItemStack(ItemRegistry.Grass, 1), new ItemStack(ItemRegistry.Dirt, 1)]),
         ]);
 
     }
@@ -34,6 +34,7 @@ public static class EntitySystem
         }
 
         MovementSystem.Draw(spriteBatch);
+        ContainerSystem.Draw(spriteBatch);
     }
 
     public static Entity CreateEntity(Texture2D texture, Component[] components)
