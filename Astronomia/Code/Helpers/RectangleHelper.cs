@@ -29,4 +29,17 @@ public static class RectangleHelper
         spriteBatch.DrawLine(start + new Vector2(width, 0), start + new Vector2(width, height), (Color)color, thickness);
         spriteBatch.DrawLine(start + new Vector2(0, height), start + new Vector2(width, height), (Color)color, thickness);
     }
+
+    public static void DrawRectangleScreen(SpriteBatch spriteBatch, Vector2 start, float width, float height, Color? color = null, float thickness = 3f)
+    {
+        if (color == null)
+        {
+            color = Color.Yellow;
+        }
+
+        spriteBatch.DrawLine(start, start + new Vector2(width, 0), (Color)color, thickness);
+        spriteBatch.DrawLine(start, start + new Vector2(0, height), (Color)color, thickness);
+        spriteBatch.DrawLine(start + new Vector2(width, 0), start + new Vector2(width, height), (Color)color, thickness);
+        spriteBatch.DrawLine(start + new Vector2(0, height), start + new Vector2(width, height), (Color)color, thickness);
+    }
 }

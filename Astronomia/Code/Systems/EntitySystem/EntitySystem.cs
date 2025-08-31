@@ -16,14 +16,15 @@ public static class EntitySystem
             new CharacterControllerComponent(PlayerSettings.MoveSpeed, PlayerSettings.JumpStrength),
             new GravityComponent(PlayerSettings.YAcceleration),
             new ColliderComponent(PlayerSettings.BoundingBox, PlayerSettings.DrawBoundingBox),
-            new ContainerComponent(new Vector2(100, 200), 10, 3, 5, [new ItemStack(ItemRegistry.Pickaxe, 1), new ItemStack(ItemRegistry.Dirt, 1), new ItemStack(ItemRegistry.Grass, 1), new ItemStack(ItemRegistry.Dirt, 1)]),
+            new ContainerComponent(new Vector2(100, 200), 10, 5, 5, [new ItemStack(ItemRegistry.Pickaxe, 0), new ItemStack(ItemRegistry.Dirt, 10), new ItemStack(ItemRegistry.Grass, 23), new ItemStack(ItemRegistry.Dirt, 128)]),
         ]);
 
     }
 
     public static void Update()
     {
-        MovementSystem.Update();
+        if (!GridSystem.LevelEditor) { MovementSystem.Update(); }
+        ContainerSystem.Update();
     }
 
     public static void Draw(SpriteBatch spriteBatch)
@@ -33,7 +34,7 @@ public static class EntitySystem
             entity.Draw(spriteBatch);
         }
 
-        MovementSystem.Draw(spriteBatch);
+        if (!GridSystem.LevelEditor) { MovementSystem.Draw(spriteBatch); }
         ContainerSystem.Draw(spriteBatch);
     }
 
