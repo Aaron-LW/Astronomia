@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework.Graphics;
 using Registries.TextureRegistry;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
+using System.ComponentModel;
 
 public static class EntitySystem
 {
@@ -23,6 +25,15 @@ public static class EntitySystem
 
     public static void Update()
     {
+        if (Input.IsKeyPressed(Keys.E))
+        {
+            Player.TryGetComponent(out ContainerComponent containerComponent);
+            if (containerComponent != null)
+            {
+                containerComponent.Opened = !containerComponent.Opened;
+            }
+        }
+
         if (!GridSystem.LevelEditor) { MovementSystem.Update(); }
         ContainerSystem.Update();
     }

@@ -23,10 +23,12 @@ public class ContainerComponent : Component
             Y = value.Y;
         }
     }
+    public bool Opened;
 
     private int _slots;
     private int _itemsPerRow;
     private float _spacing;
+    private float _itemSlotScale;
 
     public ContainerComponent(Vector2 position, int slots, int itemsPerRow, float spacing, ItemStack[] items = null)
     {
@@ -52,6 +54,11 @@ public class ContainerComponent : Component
 
     public void Update()
     {
+        if (!Opened && _itemSlotScale == 0)
+        {
+            return;
+        }
+
         Dictionary<int, RectangleF> slotBoxes = GetItemSlotBoxesAndIndices();
         foreach (KeyValuePair<int, RectangleF> keyValuePair in slotBoxes)
         {
@@ -74,25 +81,42 @@ public class ContainerComponent : Component
 
     public void Draw(SpriteBatch spriteBatch)
     {
+        //if (!Opened) { return; }
+
         int x = 0;
         int y = 0;
+        if (_itemSlotScale != Settings.ItemSlotScale && Opened)
+        {
+            _itemSlotScale = MathHelper.Lerp(_itemSlotScale, Settings.ItemSlotScale, 18f * Time.DeltaTime);
+        }
+        else if (!Opened)
+        {
+            _itemSlotScale = MathHelper.Lerp(_itemSlotScale, 0, 25f * Time.DeltaTime);
+        }
+
+        if (_itemSlotScale < 0.5f)
+        {
+            return;
+        }
 
         for (int i = 0; i < Items.Count; i++)
         {
-            Vector2 slotPosition = new Vector2(X + x * (16 * Settings.ItemSlotScale) + x * _spacing, Y + y * (16 * Settings.ItemSlotScale) + y * _spacing);
+            Vector2 slotPositionModifier = new Vector2((TextureRegistry.ItemSlot.Width * Settings.ItemSlotScale) - (TextureRegistry.ItemSlot.Width * _itemSlotScale), (TextureRegistry.ItemSlot.Height * Settings.ItemSlotScale) - (TextureRegistry.ItemSlot.Height * _itemSlotScale)) / 2;
+
+            Vector2 slotPosition = new Vector2(X + x * (16 * Settings.ItemSlotScale) + x * _spacing, Y + y * (16 * Settings.ItemSlotScale) + y * _spacing) + slotPositionModifier;
             Vector2 itemTexturePosition = new Vector2();
             if (Items[i].Item != null)
             {
                 if (Items[i].Item.Texture != null)
                 {
-                    itemTexturePosition = slotPosition + new Vector2(TextureRegistry.ItemSlot.Width * Settings.ItemSlotScale / 2 - Items[i].Item.Texture.Width * (Settings.ItemSlotScale - Items[i].ScaleModifier) / 2, TextureRegistry.ItemSlot.Height * Settings.ItemSlotScale / 2 - Items[i].Item.Texture.Height * (Settings.ItemSlotScale - Items[i].ScaleModifier) / 2);
+                    itemTexturePosition = slotPosition + new Vector2(TextureRegistry.ItemSlot.Width * _itemSlotScale / 2 - Items[i].Item.Texture.Width * (_itemSlotScale - Items[i].ScaleModifier) / 2, TextureRegistry.ItemSlot.Height * _itemSlotScale / 2 - Items[i].Item.Texture.Height * (_itemSlotScale - Items[i].ScaleModifier) / 2);
                     if (Items[i].Position != itemTexturePosition)
                     {
                         Items[i].X = MathHelper.Lerp(Items[i].X, itemTexturePosition.X, 100f * Time.DeltaTime);
                         Items[i].Y = MathHelper.Lerp(Items[i].Y, itemTexturePosition.Y, 100f * Time.DeltaTime);
                     }
 
-                    RectangleF rectangle = new RectangleF(itemTexturePosition.X, itemTexturePosition.Y, Items[i].Item.Texture.Width * (Settings.ItemSlotScale - Items[i].ScaleModifier), Items[i].Item.Texture.Height * (Settings.ItemSlotScale - Items[i].ScaleModifier));
+                    RectangleF rectangle = new RectangleF(itemTexturePosition.X, itemTexturePosition.Y, Items[i].Item.Texture.Width * (_itemSlotScale - Items[i].ScaleModifier), Items[i].Item.Texture.Height * (_itemSlotScale - Items[i].ScaleModifier));
                     if (rectangle.Intersects(Input.GetMouseRectangle()))
                     {
                         Items[i].ScaleModifier = MathHelper.Lerp(Items[i].ScaleModifier, 0.5f, 100f * Time.DeltaTime);
@@ -105,19 +129,22 @@ public class ContainerComponent : Component
             }
 
 
-            spriteBatch.Draw(TextureRegistry.ItemSlot, slotPosition, null, Color.White, 0f, new Vector2(), Settings.ItemSlotScale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(TextureRegistry.ItemSlot, slotPosition, null, Color.White, 0f, new Vector2(), _itemSlotScale, SpriteEffects.None, 0f);
             if (Items[i].Item.Texture != null)
             {
-                spriteBatch.Draw(Items[i].Item.Texture, Items[i].Position, null, Color.White, 0f, new Vector2(), Settings.ItemSlotScale - Items[i].ScaleModifier, SpriteEffects.None, 0f);
+                if (_itemSlotScale - Items[i].ScaleModifier > 0)
+                {
+                    spriteBatch.Draw(Items[i].Item.Texture, Items[i].Position, null, Color.White, 0f, new Vector2(), _itemSlotScale - Items[i].ScaleModifier, SpriteEffects.None, 0f);
+                }
             }
 
             if (Items[i].Amount != 1 || Items[i].Amount != 0)
             {
                 if (Items[i].Item.Texture != null)
                 {
-                    Vector2 textPosition = itemTexturePosition + new Vector2(Items[i].Item.Texture.Width * (Settings.ItemSlotScale - Items[i].ScaleModifier) - Settings.Font.MeasureString(Items[i].Amount.ToString()).X * 0.1f / 1.5f
-                                                                           , Items[i].Item.Texture.Height * (Settings.ItemSlotScale - Items[i].ScaleModifier) - Settings.Font.MeasureString(Items[i].Amount.ToString()).Y * 0.1f / 1.5f);
-                    spriteBatch.DrawString(Settings.Font, Items[i].Amount.ToString(), textPosition, Color.White, 0f, new Vector2(), 0.1f, SpriteEffects.None, 0f);
+                    Vector2 textPosition = itemTexturePosition + new Vector2(Items[i].Item.Texture.Width * (_itemSlotScale - Items[i].ScaleModifier) - Settings.Font.MeasureString(Items[i].Amount.ToString()).X * 0.1f / 1.5f
+                                                                           , Items[i].Item.Texture.Height * (_itemSlotScale - Items[i].ScaleModifier) - Settings.Font.MeasureString(Items[i].Amount.ToString()).Y * 0.1f / 1.5f);
+                    spriteBatch.DrawString(Settings.Font, Items[i].Amount.ToString(), textPosition + slotPositionModifier, Color.White, 0f, new Vector2(), _itemSlotScale * 0.02f, SpriteEffects.None, 0f);
                 }
             }
 
@@ -184,8 +211,8 @@ public class ContainerComponent : Component
 
         for (int i = 0; i < Items.Count; i++)
         {
-            Vector2 slotPosition = new Vector2(X + x * (16 * Settings.ItemSlotScale) + x * _spacing, Y + y * (16 * Settings.ItemSlotScale) + y * _spacing);
-            RectangleF rectangle = new RectangleF(slotPosition.X, slotPosition.Y, TextureRegistry.ItemSlot.Width * Settings.ItemSlotScale, TextureRegistry.ItemSlot.Height * Settings.ItemSlotScale);
+            Vector2 slotPosition = new Vector2(X + x * (16 * _itemSlotScale) + x * _spacing, Y + y * (16 * _itemSlotScale) + y * _spacing);
+            RectangleF rectangle = new RectangleF(slotPosition.X, slotPosition.Y, TextureRegistry.ItemSlot.Width * _itemSlotScale, TextureRegistry.ItemSlot.Height * _itemSlotScale);
 
             dict[i] = rectangle;
 
