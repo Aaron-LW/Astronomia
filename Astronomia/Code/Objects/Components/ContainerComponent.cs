@@ -29,6 +29,7 @@ public class ContainerComponent : Component
     private int _itemsPerRow;
     private float _spacing;
     private float _itemSlotScale;
+    private float _itemSlotAlpha;
 
     public ContainerComponent(Vector2 position, int slots, int itemsPerRow, float spacing, ItemStack[] items = null)
     {
@@ -60,20 +61,23 @@ public class ContainerComponent : Component
         }
 
         Dictionary<int, RectangleF> slotBoxes = GetItemSlotBoxesAndIndices();
-        foreach (KeyValuePair<int, RectangleF> keyValuePair in slotBoxes)
+        if (slotBoxes != null)
         {
-            if (keyValuePair.Value.Intersects(Input.GetMouseRectangle()) && Input.IsLeftMousePressed())
+            foreach (KeyValuePair<int, RectangleF> keyValuePair in slotBoxes)
             {
-                if (ContainerSystem.HeldItem == null)
+                if (keyValuePair.Value.Intersects(Input.GetMouseRectangle()) && Input.IsLeftMousePressed())
                 {
-                    ContainerSystem.HeldItem = Items[keyValuePair.Key];
-                    Items[keyValuePair.Key] = new ItemStack(ItemRegistry.Blank, 0);
-                }
-                else
-                {
-                    ItemStack tempStack = Items[keyValuePair.Key];
-                    Items[keyValuePair.Key] = ContainerSystem.HeldItem;
-                    ContainerSystem.HeldItem = tempStack;
+                    if (ContainerSystem.HeldItem == null)
+                    {
+                        ContainerSystem.HeldItem = Items[keyValuePair.Key];
+                        Items[keyValuePair.Key] = new ItemStack(ItemRegistry.Blank, 0);
+                    }
+                    else
+                    {
+                        ItemStack tempStack = Items[keyValuePair.Key];
+                        Items[keyValuePair.Key] = ContainerSystem.HeldItem;
+                        ContainerSystem.HeldItem = tempStack;
+                    }
                 }
             }
         }
@@ -81,8 +85,6 @@ public class ContainerComponent : Component
 
     public void Draw(SpriteBatch spriteBatch)
     {
-        //if (!Opened) { return; }
-
         int x = 0;
         int y = 0;
         if (_itemSlotScale != Settings.ItemSlotScale && Opened)
@@ -92,6 +94,15 @@ public class ContainerComponent : Component
         else if (!Opened)
         {
             _itemSlotScale = MathHelper.Lerp(_itemSlotScale, 0, 25f * Time.DeltaTime);
+        }
+
+        if (_itemSlotAlpha < 1f && Opened)
+        {
+            _itemSlotAlpha = MathHelper.Lerp(_itemSlotAlpha, 1f, 9f * Time.DeltaTime);
+        }
+        else if (!Opened)
+        {
+            _itemSlotAlpha = MathHelper.Lerp(_itemSlotAlpha, 0f, 14f * Time.DeltaTime);
         }
 
         if (_itemSlotScale < 0.5f)
@@ -105,6 +116,7 @@ public class ContainerComponent : Component
 
             Vector2 slotPosition = new Vector2(X + x * (16 * Settings.ItemSlotScale) + x * _spacing, Y + y * (16 * Settings.ItemSlotScale) + y * _spacing) + slotPositionModifier;
             Vector2 itemTexturePosition = new Vector2();
+
             if (Items[i].Item != null)
             {
                 if (Items[i].Item.Texture != null)
@@ -129,12 +141,12 @@ public class ContainerComponent : Component
             }
 
 
-            spriteBatch.Draw(TextureRegistry.ItemSlot, slotPosition, null, Color.White, 0f, new Vector2(), _itemSlotScale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(TextureRegistry.ItemSlot, slotPosition, null, Color.White * _itemSlotAlpha, 0f, new Vector2(), _itemSlotScale, SpriteEffects.None, 0f);
             if (Items[i].Item.Texture != null)
             {
                 if (_itemSlotScale - Items[i].ScaleModifier > 0)
                 {
-                    spriteBatch.Draw(Items[i].Item.Texture, Items[i].Position, null, Color.White, 0f, new Vector2(), _itemSlotScale - Items[i].ScaleModifier, SpriteEffects.None, 0f);
+                    spriteBatch.Draw(Items[i].Item.Texture, Items[i].Position, null, Color.White * _itemSlotAlpha, 0f, new Vector2(), _itemSlotScale - Items[i].ScaleModifier, SpriteEffects.None, 0f);
                 }
             }
 
@@ -144,7 +156,7 @@ public class ContainerComponent : Component
                 {
                     Vector2 textPosition = itemTexturePosition + new Vector2(Items[i].Item.Texture.Width * (_itemSlotScale - Items[i].ScaleModifier) - Settings.Font.MeasureString(Items[i].Amount.ToString()).X * 0.1f / 1.5f
                                                                            , Items[i].Item.Texture.Height * (_itemSlotScale - Items[i].ScaleModifier) - Settings.Font.MeasureString(Items[i].Amount.ToString()).Y * 0.1f / 1.5f);
-                    spriteBatch.DrawString(Settings.Font, Items[i].Amount.ToString(), textPosition + slotPositionModifier, Color.White, 0f, new Vector2(), _itemSlotScale * 0.02f, SpriteEffects.None, 0f);
+                    spriteBatch.DrawString(Settings.Font, Items[i].Amount.ToString(), textPosition + slotPositionModifier, Color.White * _itemSlotAlpha, 0f, new Vector2(), _itemSlotScale * 0.02f, SpriteEffects.None, 0f);
                 }
             }
 
@@ -205,14 +217,15 @@ public class ContainerComponent : Component
 
     private Dictionary<int, RectangleF> GetItemSlotBoxesAndIndices()
     {
+        if (!Opened) { return null; }
         int x = 0;
         int y = 0;
         Dictionary<int, RectangleF> dict = new Dictionary<int, RectangleF>();
 
         for (int i = 0; i < Items.Count; i++)
         {
-            Vector2 slotPosition = new Vector2(X + x * (16 * _itemSlotScale) + x * _spacing, Y + y * (16 * _itemSlotScale) + y * _spacing);
-            RectangleF rectangle = new RectangleF(slotPosition.X, slotPosition.Y, TextureRegistry.ItemSlot.Width * _itemSlotScale, TextureRegistry.ItemSlot.Height * _itemSlotScale);
+            Vector2 slotPosition = new Vector2(X + x * (16 * Settings.ItemSlotScale) + x * _spacing, Y + y * (16 * Settings.ItemSlotScale) + y * _spacing);
+            RectangleF rectangle = new RectangleF(slotPosition.X, slotPosition.Y, TextureRegistry.ItemSlot.Width * Settings.ItemSlotScale, TextureRegistry.ItemSlot.Height * Settings.ItemSlotScale);
 
             dict[i] = rectangle;
 
