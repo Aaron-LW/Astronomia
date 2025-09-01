@@ -37,8 +37,17 @@ public static class ContainerSystem
 
         if (HeldItem.Item.Texture != null)
         {
-            //To-Do: shmoovie machen
-            spriteBatch.Draw(HeldItem.Item.Texture, Input.GetMousePosition() - new Vector2(HeldItem.Item.Texture.Width / 2 * (Settings.ItemSlotScale - Settings.ItemStackDefaultScaleModifier), HeldItem.Item.Texture.Height / 2 * (Settings.ItemSlotScale - HeldItem.ScaleModifier)), null, Color.White, 0f, new Vector2(), Settings.ItemSlotScale - HeldItem.ScaleModifier, SpriteEffects.None, 0f);
+            Vector2 mousePosition = Input.GetMousePosition();
+            HeldItem.X = MathHelper.Lerp(HeldItem.X, mousePosition.X - HeldItem.Item.Texture.Width * (Settings.ItemSlotScale - HeldItem.ScaleModifier) / 2, 100f * Time.DeltaTime);
+            HeldItem.Y = MathHelper.Lerp(HeldItem.Y, mousePosition.Y - HeldItem.Item.Texture.Height * (Settings.ItemSlotScale - HeldItem.ScaleModifier) / 2, 100f * Time.DeltaTime);
+            spriteBatch.Draw(HeldItem.Item.Texture, HeldItem.Position, null, Color.White, 0f, new Vector2(), Settings.ItemSlotScale - HeldItem.ScaleModifier, SpriteEffects.None, 0f);
+
+            if (HeldItem.Amount != 1 || HeldItem.Amount != 0)
+            {
+                Vector2 textPosition = HeldItem.Position + new Vector2(HeldItem.Item.Texture.Width * (Settings.ItemSlotScale - HeldItem.ScaleModifier) - Settings.Font.MeasureString(HeldItem.Amount.ToString()).X * 0.1f / 1.5f
+                                                                       , HeldItem.Item.Texture.Height * (Settings.ItemSlotScale - HeldItem.ScaleModifier) - Settings.Font.MeasureString(HeldItem.Amount.ToString()).Y * 0.1f / 1.5f);
+                spriteBatch.DrawString(Settings.Font, HeldItem.Amount.ToString(), textPosition, Color.White, 0f, new Vector2(), 0.1f, SpriteEffects.None, 0f);
+            }
         }
     }
 }

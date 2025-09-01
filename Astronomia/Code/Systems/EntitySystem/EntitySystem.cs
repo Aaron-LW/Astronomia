@@ -16,7 +16,7 @@ public static class EntitySystem
             new CharacterControllerComponent(PlayerSettings.MoveSpeed, PlayerSettings.JumpStrength),
             new GravityComponent(PlayerSettings.YAcceleration),
             new ColliderComponent(PlayerSettings.BoundingBox, PlayerSettings.DrawBoundingBox),
-            new ContainerComponent(new Vector2(100, 200), 10, 5, 5, [new ItemStack(ItemRegistry.Pickaxe, 0), new ItemStack(ItemRegistry.Dirt, 10), new ItemStack(ItemRegistry.Grass, 23), new ItemStack(ItemRegistry.Dirt, 128)]),
+            new ContainerComponent(new Vector2(100, 200), 21, 7, 5, [new ItemStack(ItemRegistry.Pickaxe, 0), new ItemStack(ItemRegistry.Dirt, 10), new ItemStack(ItemRegistry.Grass, 23), new ItemStack(ItemRegistry.Dirt, 128)]),
         ]);
 
     }

@@ -34,19 +34,20 @@ public class ContainerComponent : Component
         _itemsPerRow = itemsPerRow;
         Position = position;
         _spacing = spacing;
-        if (items != null)
+
+        for (int i = 0; i < _slots; i++)
         {
-            Items.AddRange(items);
+            Items.Add(new ItemStack(ItemRegistry.Blank, 0));
         }
 
-        if (Items.Count < _slots)
+        if (items != null)
         {
-            float a = _slots - Items.Count;
-            for (int i = 0; i < a; i++)
+            for (int i = 0; i < items.Length; i++)
             {
-                Items.Add(new ItemStack(ItemRegistry.Blank, 0));
+                AddItem(items[i]);
             }
         }
+
     }
 
     public void Update()
@@ -85,6 +86,12 @@ public class ContainerComponent : Component
                 if (Items[i].Item.Texture != null)
                 {
                     itemTexturePosition = slotPosition + new Vector2(TextureRegistry.ItemSlot.Width * Settings.ItemSlotScale / 2 - Items[i].Item.Texture.Width * (Settings.ItemSlotScale - Items[i].ScaleModifier) / 2, TextureRegistry.ItemSlot.Height * Settings.ItemSlotScale / 2 - Items[i].Item.Texture.Height * (Settings.ItemSlotScale - Items[i].ScaleModifier) / 2);
+                    if (Items[i].Position != itemTexturePosition)
+                    {
+                        Items[i].X = MathHelper.Lerp(Items[i].X, itemTexturePosition.X, 100f * Time.DeltaTime);
+                        Items[i].Y = MathHelper.Lerp(Items[i].Y, itemTexturePosition.Y, 100f * Time.DeltaTime);
+                    }
+
                     RectangleF rectangle = new RectangleF(itemTexturePosition.X, itemTexturePosition.Y, Items[i].Item.Texture.Width * (Settings.ItemSlotScale - Items[i].ScaleModifier), Items[i].Item.Texture.Height * (Settings.ItemSlotScale - Items[i].ScaleModifier));
                     if (rectangle.Intersects(Input.GetMouseRectangle()))
                     {
@@ -101,7 +108,7 @@ public class ContainerComponent : Component
             spriteBatch.Draw(TextureRegistry.ItemSlot, slotPosition, null, Color.White, 0f, new Vector2(), Settings.ItemSlotScale, SpriteEffects.None, 0f);
             if (Items[i].Item.Texture != null)
             {
-                spriteBatch.Draw(Items[i].Item.Texture, itemTexturePosition, null, Color.White, 0f, new Vector2(), Settings.ItemSlotScale - Items[i].ScaleModifier, SpriteEffects.None, 0f);
+                spriteBatch.Draw(Items[i].Item.Texture, Items[i].Position, null, Color.White, 0f, new Vector2(), Settings.ItemSlotScale - Items[i].ScaleModifier, SpriteEffects.None, 0f);
             }
 
             if (Items[i].Amount != 1 || Items[i].Amount != 0)
@@ -121,6 +128,52 @@ public class ContainerComponent : Component
                 y++;
             }
         }
+    }
+
+    public void AddItem(ItemStack itemStack)
+    {
+        if (itemStack.Amount <= 0)
+        {
+            Console.WriteLine("Can't add 0 of item " + itemStack.Item.Name);
+            return;
+        }
+
+        foreach (ItemStack item in Items)
+        {
+            if (item.Item == itemStack.Item && item.Amount < item.Item.MaxStackSize || item.Item == ItemRegistry.Blank)
+            {
+                if (item.Item == ItemRegistry.Blank)
+                {
+                    if (itemStack.Amount > itemStack.Item.MaxStackSize)
+                    {
+                        item.Item = itemStack.Item;
+                        item.Amount = itemStack.Item.MaxStackSize;
+                        itemStack.Amount -= itemStack.Item.MaxStackSize;
+                    }
+                    else
+                    {
+                        item.Item = itemStack.Item;
+                        item.Amount = itemStack.Amount;
+                        return;
+                    }
+                }
+                else
+                {
+                    if (item.Amount + itemStack.Amount > item.Item.MaxStackSize)
+                    {
+                        itemStack.Amount -= item.Item.MaxStackSize - item.Amount;
+                        item.Amount = item.Item.MaxStackSize;
+                    }
+                    else
+                    {
+                        item.Amount += itemStack.Amount;
+                        return;
+                    }
+                }
+            }
+        }
+
+        Console.WriteLine("Not enough space to put Item " + itemStack.Item.Name);
     }
 
     private Dictionary<int, RectangleF> GetItemSlotBoxesAndIndices()
