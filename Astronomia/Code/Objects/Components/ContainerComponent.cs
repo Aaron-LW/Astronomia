@@ -23,7 +23,7 @@ public class ContainerComponent : Component
             Y = value.Y;
         }
     }
-    public bool Opened;
+    public bool Opened = false;
 
     private int _slots;
     private int _itemsPerRow;

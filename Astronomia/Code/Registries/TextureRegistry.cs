@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Astronomia;
+using Microsoft.Xna.Framework;
 
 namespace Registries.TextureRegistry
 {
@@ -15,6 +16,7 @@ namespace Registries.TextureRegistry
         public static Texture2D Dirt;
         public static Texture2D Pickaxe;
         public static Texture2D ItemSlot;
+        public static Texture2D GradientTexture;
 
         public static void LoadTextures(Game1 game1)
         {
@@ -29,6 +31,16 @@ namespace Registries.TextureRegistry
             TileTextures.Add(Grass);
             TileTextures.Add(GrassEdge);
             TileTextures.Add(Dirt);
+
+            GradientTexture = new Texture2D(game1.GraphicsDevice, 4, 1);
+
+            Color[] colors = new Color[4];
+            colors[0] = Color.White;
+            colors[1] = Color.Transparent;
+            colors[2] = Color.Transparent;
+            colors[3] = Color.Transparent;
+
+            GradientTexture.SetData(colors);
         }
     }
 }

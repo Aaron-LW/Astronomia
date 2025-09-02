@@ -10,10 +10,11 @@ public class Game1 : Game
 {
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
-    
+
     private int _frameCounter;
     private TimeSpan _elapsedTime = TimeSpan.Zero;
     private int _fps;
+    private static bool _exit = false;
 
     public Game1()
     {
@@ -49,10 +50,11 @@ public class Game1 : Game
 
     protected override void Update(GameTime gameTime)
     {
-        if (Keyboard.GetState().IsKeyDown(Keys.Escape))
-            Exit();
-
         Updater.Update(gameTime, GraphicsDevice);
+        if (_exit)
+        {
+            Exit();
+        }
 
         _elapsedTime += gameTime.ElapsedGameTime;
         _frameCounter++;
@@ -87,5 +89,10 @@ public class Game1 : Game
         _spriteBatch.End();
         //HI                                                                                                  
         base.Draw(gameTime);
+    }
+
+    public static void CloseGame()
+    {
+        _exit = true;
     }
 }
