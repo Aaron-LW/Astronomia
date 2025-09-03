@@ -58,6 +58,7 @@ public class AnimatedText
                 _endPositionHoverModifier = new Vector2(30, 0);
                 if (Input.IsLeftMousePressed())
                 {
+                    EscapeMenu.Close();
                     OnClickAction();
                 }
             }

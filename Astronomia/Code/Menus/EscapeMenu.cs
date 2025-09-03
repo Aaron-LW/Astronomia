@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Net;
 using Astronomia;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -12,11 +13,12 @@ public static class EscapeMenu
     private static float _counterBase = 0.06f;
     private static int _textIndex = 0;
     private static bool _active = false;
+    public static string OpenedMenu = String.Empty;
 
     public static void Start()
     {
         _animatedTexts.Add(new AnimatedText("Exit", new Vector2(-150, 200), new Vector2(75, 200), 30, Game1.CloseGame, 0.1f));
-        _animatedTexts.Add(new AnimatedText("Controls", new Vector2(-300, 290), new Vector2(75, 290), 30, Game1.CloseGame, 0.1f));
+        _animatedTexts.Add(new AnimatedText("Controls", new Vector2(-300, 290), new Vector2(75, 290), 30, ControlsMenu.Open, 0.1f));
     }
 
     public static void Update()
@@ -28,14 +30,27 @@ public static class EscapeMenu
 
         if (Input.IsKeyPressed(Keys.Escape))
         {
+            if (OpenedMenu != String.Empty)
+            {
+                switch (OpenedMenu)
+                {
+                    case "ControlsMenu":
+                        ControlsMenu.Close();
+                        OpenedMenu = String.Empty;
+                        break;
+                }
+                
+                goto endEscape;
+            }
+
             _active = !_active;
             if (!_active)
             {
-                foreach (AnimatedText animatedText in _animatedTexts)
-                {
-                    animatedText.Active = false;
-                }
+                Close();
             }
+
+            endEscape:
+                ;
         }
 
         if (_active)
@@ -66,5 +81,17 @@ public static class EscapeMenu
                 _animatedTexts[i].Active = true;
             }
         }
+    }
+
+    public static void Close()
+    {
+        _active = false;
+        if (!_active)
+            {
+                foreach (AnimatedText animatedText in _animatedTexts)
+                {
+                    animatedText.Active = false;
+                }
+            }
     }
 }

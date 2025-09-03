@@ -17,6 +17,7 @@ namespace Registries.TextureRegistry
         public static Texture2D Pickaxe;
         public static Texture2D ItemSlot;
         public static Texture2D GradientTexture;
+        public static Texture2D KeyboardKey;
 
         public static void LoadTextures(Game1 game1)
         {
@@ -27,6 +28,7 @@ namespace Registries.TextureRegistry
             Dirt = game1.Content.Load<Texture2D>("Dirt");
             Pickaxe = game1.Content.Load<Texture2D>("Pickaxe");
             ItemSlot = game1.Content.Load<Texture2D>("ItemSlot");
+            KeyboardKey = game1.Content.Load<Texture2D>("KeyboardKey");
 
             TileTextures.Add(Grass);
             TileTextures.Add(GrassEdge);
